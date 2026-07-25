@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --rule: theme('colors.sand.300');
+    --grain: .035;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-sand-50 text-ink font-sans font-light antialiased;
+  }
+
+  /* Titres : Poppins léger en latin, Tajawal en arabe */
+  h1, h2, h3, h4 {
+    @apply font-display font-light tracking-[-0.01em];
+  }
+
+  [dir='rtl'] h1,
+  [dir='rtl'] h2,
+  [dir='rtl'] h3,
+  [dir='rtl'] h4 {
+    @apply font-ar font-bold tracking-normal;
+  }
+
+  [dir='rtl'] body {
+    @apply font-ar;
+  }
+
+  ::selection {
+    @apply bg-vert-700 text-sand-50;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.vert.700');
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Conteneur principal, aligné sur la grille du site */
+  .shell {
+    @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8;
+  }
+
+  /* Filet horizontal fin, signature du design institutionnel */
+  .rule {
+    @apply border-sand-300;
+  }
+
+  /* Petite étiquette majuscule utilisée pour numéroter les sections */
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.18em] text-ocre-700;
+  }
+
+  [dir='rtl'] .eyebrow {
+    @apply tracking-normal;
+  }
+
+  /* Grille de fond : lignes verticales très discrètes */
+  .gridlines {
+    background-image: linear-gradient(
+      to right,
+      theme('colors.sand.200') 1px,
+      transparent 1px
+    );
+    background-size: 25% 100%;
+  }
+}
+
+@layer utilities {
+  /* Grain papier appliqué en overlay global */
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: var(--grain);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Étoile à huit branches — motif géométrique maure, très atténué */
+  .motif {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%230F4C3A' stroke-width='1'%3E%3Cpath d='M32 4 44 20 60 32 44 44 32 60 20 44 4 32 20 20Z'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 64px 64px;
+  }
+
+  .stagger > * {
+    animation: rise .7s cubic-bezier(.2, .7, .3, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: .05s }
+  .stagger > *:nth-child(2) { animation-delay: .13s }
+  .stagger > *:nth-child(3) { animation-delay: .21s }
+  .stagger > *:nth-child(4) { animation-delay: .29s }
+  .stagger > *:nth-child(5) { animation-delay: .37s }
+  .stagger > *:nth-child(6) { animation-delay: .45s }
+
+  /* Retourne l'icône directionnelle quand la page passe en arabe */
+  [dir='rtl'] .flip-rtl {
+    transform: scaleX(-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "thiga",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "vite build --ssr scripts/mount.jsx --outDir .check --logLevel error && node .check/mount.js",
+    "lint:effects": "node scripts/lint-effects.mjs",
+    "rasterize": "node scripts/rasterize.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.8",
+    "lucide-react": "^0.400.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "jsdom": "^24.1.0",
+    "postcss": "^8.4.40",
+    "sharp": "^0.35.3",
+    "tailwindcss": "^3.4.7",
+    "vite": "^5.4.0"
+  }
+}

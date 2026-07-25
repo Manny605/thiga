@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+.check
+
+# Secrets locaux — jamais committés
+.env
+.env.local
+.env.*.local

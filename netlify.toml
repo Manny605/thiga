@@ -1,0 +1,31 @@
+# Déploiement Netlify — application monopage servie en statique.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# React Router résout les routes côté navigateur : sans cette règle, ouvrir
+# directement /offres/<id> ou recharger la page renverrait un 404, le serveur
+# cherchant un fichier à ce chemin. Le statut 200 sert index.html sans
+# redirection visible, et ne s'applique qu'après échec de la recherche d'un
+# fichier réel — les assets restent servis normalement.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Le bundle porte un identifiant unique à chaque build : il peut être mis en
+# cache indéfiniment. index.html, lui, ne doit jamais l'être, sinon une
+# nouvelle version reste invisible.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

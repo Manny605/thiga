@@ -1,0 +1,110 @@
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useI18n } from '../i18n/I18nProvider'
+import { useAuth } from '../auth/AuthProvider'
+import { dashPathFor } from '../auth/roles'
+import { fetchProfile } from '../lib/profile'
+import { Wordmark } from '../components/layout/Header'
+import { Checkbox, Input } from '../components/ui/Field'
+import Button from '../components/ui/Button'
+
+export default function Login() {
+  const { t } = useI18n()
+  const { signIn, signOut } = useAuth()
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+
+    const { data, error: signInError } = await signIn(email, password)
+
+    if (signInError) {
+      setSubmitting(false)
+      setError(t('auth.errorInvalidCredentials'))
+      return
+    }
+
+    // Le contexte d'auth charge le profil de son côté, mais de façon
+    // asynchrone : on relit le rôle ici pour rediriger sans attendre — et
+    // sans passer par un écran intermédiaire.
+    let profile = null
+    try {
+      profile = await fetchProfile(data.user.id)
+    } catch {
+      profile = null
+    }
+
+    if (profile?.status === 'suspended') {
+      await signOut()
+      setSubmitting(false)
+      setError(t('auth.errorSuspended'))
+      return
+    }
+
+    setSubmitting(false)
+    navigate(dashPathFor(profile?.role) || '/', { replace: true })
+  }
+
+  return (
+    <div className="flex min-h-[80vh] items-center justify-center px-5 py-16">
+      <div className="w-full max-w-sm animate-rise">
+        <div className="mb-8 flex justify-center">
+          <Wordmark imgClass="h-24 w-auto" />
+        </div>
+
+        <div className="border border-sand-200 bg-white p-8">
+          <h1 className="text-[26px] leading-tight">{t('auth.loginTitle')}</h1>
+          <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{t('auth.loginLede')}</p>
+
+          <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
+            <Input
+              label={t('auth.email')}
+              type="email"
+              placeholder="nom@exemple.mr"
+              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              label={t('auth.password')}
+              type="password"
+              placeholder="••••••••"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <div className="flex items-center justify-between pt-1">
+              <Checkbox label={t('auth.remember')} />
+              <button type="button" className="text-[12.5px] text-vert-700 hover:underline">
+                {t('auth.forgot')}
+              </button>
+            </div>
+
+            {error && <p className="text-[13px] text-red-600">{error}</p>}
+
+            <Button type="submit" size="lg" className="mt-2 w-full" disabled={submitting}>
+              {submitting ? '…' : t('auth.submitLogin')}
+            </Button>
+          </form>
+        </div>
+
+        <p className="mt-6 text-center text-[13.5px] text-ink-600">
+          {t('auth.noAccount')}{' '}
+          <Link to="/inscription" className="font-medium text-vert-700 hover:underline">
+            {t('nav.register')}
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
+}

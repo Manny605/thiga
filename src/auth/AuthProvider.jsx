@@ -1,0 +1,88 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { supabase } from '../lib/supabaseClient'
+import { fetchProfile } from '../lib/profile'
+
+const AuthContext = createContext(null)
+
+export function AuthProvider({ children }) {
+  const [session, setSession] = useState(null)
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  // Démarre à true : entre la résolution de la session et le premier rendu de
+  // l'effet ci-dessous, `profile` vaut null sans que ce soit une réponse. Sans
+  // ce drapeau, les gardes de route liraient « connecté sans profil » et
+  // redirigeraient à tort.
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [reloadKey, setReloadKey] = useState(0)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setLoading(false)
+    })
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+      setSession(next)
+    })
+
+    return () => sub.subscription.unsubscribe()
+  }, [])
+
+  const userId = session?.user?.id
+
+  useEffect(() => {
+    let active = true
+
+    if (!userId) {
+      setProfile(null)
+      setProfileLoading(false)
+      return undefined
+    }
+
+    setProfileLoading(true)
+    fetchProfile(userId)
+      .then((data) => { if (active) setProfile(data) })
+      .catch(() => { if (active) setProfile(null) })
+      .finally(() => { if (active) setProfileLoading(false) })
+
+    return () => { active = false }
+  }, [userId, reloadKey])
+
+  /** À appeler après une modification du nom/de la ville dans les paramètres. */
+  const refreshProfile = useCallback(() => setReloadKey((k) => k + 1), [])
+
+  const value = useMemo(() => {
+    /** Inscription ; `data` alimente le trigger `handle_new_user` (role, full_name, phone, city, trade). */
+    const signUp = (email, password, data) =>
+      supabase.auth.signUp({ email, password, options: { data } })
+
+    const signIn = (email, password) =>
+      supabase.auth.signInWithPassword({ email, password })
+
+    const signOut = () => supabase.auth.signOut()
+
+    return {
+      session,
+      user: session?.user ?? null,
+      profile,
+      loading,
+      profileLoading,
+      /** Session *et* profil résolus : les gardes de route peuvent décider. */
+      ready: !loading && !profileLoading,
+      isAuthenticated: !!session,
+      isSuspended: profile?.status === 'suspended',
+      refreshProfile,
+      signUp,
+      signIn,
+      signOut,
+    }
+  }, [session, profile, loading, profileLoading, refreshProfile])
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth doit être utilisé dans <AuthProvider>')
+  return ctx
+}
