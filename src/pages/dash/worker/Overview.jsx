@@ -28,19 +28,21 @@ export default function Overview() {
       .catch(() => setSuggested([]))
   }, [workerProfile?.trade, workerProfile?.city])
 
-  // Le CV compte dans la complétion : c'est lui qui porte une candidature.
-  const completion = workerProfile
-    ? Math.round(
-        (
-          [
-            !!workerProfile.bio,
-            workerProfile.skills.length > 0,
-            !!workerProfile.rate,
-            workerProfile.langs.length > 0,
-            !!workerProfile.cvPath,
-          ].filter(Boolean).length / 5
-        ) * 100
-      )
+  // Chaque élément : libellé, fait ou non, page où le compléter. La photo et
+  // la vérification comptent : sans vérification, le profil reste hors annuaire.
+  const checklist = workerProfile
+    ? [
+        [t('avatar.title'), !!profile?.avatar_path, '/tableau-de-bord/travailleur/parametres'],
+        [t('dash.bioLabel'), !!workerProfile.bio, '/tableau-de-bord/travailleur/profil'],
+        [t('common.skills'), workerProfile.skills.length > 0, '/tableau-de-bord/travailleur/profil'],
+        [t('common.languages'), workerProfile.langs.length > 0, '/tableau-de-bord/travailleur/profil'],
+        [t('common.rate'), !!workerProfile.rate, '/tableau-de-bord/travailleur/profil'],
+        [t('cv.title'), !!workerProfile.cvPath, '/tableau-de-bord/travailleur/profil'],
+        [t('verification.title'), !!workerProfile.verified, '/tableau-de-bord/travailleur/profil'],
+      ]
+    : []
+  const completion = checklist.length
+    ? Math.round((checklist.filter(([, done]) => done).length / checklist.length) * 100)
     : 0
 
   const recentApps = applications.slice(0, 5)
@@ -76,26 +78,26 @@ export default function Overview() {
           </div>
 
           {completion < 100 && (
-            <p className="mt-4 text-[13px] leading-relaxed text-ink-600">{t('dash.completionHint')}</p>
+            <p className="mt-4 text-[14px] leading-relaxed text-ink-600">{t('dash.completionHint')}</p>
           )}
 
           <ul className="mt-5 space-y-2.5 border-t border-sand-200/70 pt-5">
-            {[
-              [t('dash.bioLabel'), !!workerProfile?.bio],
-              [t('common.skills'), (workerProfile?.skills.length || 0) > 0],
-              [t('common.languages'), (workerProfile?.langs.length || 0) > 0],
-              [t('common.rate'), !!workerProfile?.rate],
-              [t('cv.title'), !!workerProfile?.cvPath],
-            ].map(([label, done]) => (
-              <li key={label} className="flex items-center gap-2.5 text-[13px]">
+            {checklist.map(([label, done, to]) => (
+              <li key={label} className="flex items-center gap-2.5 text-[14px]">
                 <span
-                  className={`grid h-4 w-4 place-items-center rounded-full text-[9px] ${
+                  className={`grid h-4 w-4 place-items-center rounded-full text-[10px] ${
                     done ? 'bg-vert-700 text-sand-50' : 'border border-sand-400 text-transparent'
                   }`}
                 >
                   ✓
                 </span>
-                <span className={done ? 'text-ink-600' : 'text-ink-400'}>{label}</span>
+                {done ? (
+                  <span className="text-ink-600">{label}</span>
+                ) : (
+                  <Link to={to} className="text-ink-400 underline decoration-sand-300 underline-offset-4 hover:text-vert-700 hover:decoration-vert-700">
+                    {label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -111,13 +113,13 @@ export default function Overview() {
           bodyClass=""
           className="xl:col-span-7"
           action={
-            <Link to="/tableau-de-bord/travailleur/candidatures" className="text-[12.5px] text-vert-700 hover:underline">
+            <Link to="/tableau-de-bord/travailleur/candidatures" className="text-[13.5px] text-vert-700 hover:underline">
               {t('dash.seeAll')}
             </Link>
           }
         >
           {recentApps.length === 0 ? (
-            <p className="px-6 py-10 text-center text-[13.5px] text-ink-400">{t('common.empty')}</p>
+            <p className="px-6 py-10 text-center text-[14.5px] text-ink-400">{t('common.empty')}</p>
           ) : (
             <ul className="divide-y divide-sand-200">
               {recentApps.map((a) => (
@@ -125,11 +127,11 @@ export default function Overview() {
                   <div className="min-w-0 flex-1">
                     <Link
                       to={`/offres/${a.jobId}`}
-                      className="block truncate text-[14px] font-medium text-ink transition-colors hover:text-vert-700"
+                      className="block truncate text-[15px] font-medium text-ink transition-colors hover:text-vert-700"
                     >
                       {a.jobTitle}
                     </Link>
-                    <p className="mt-1 truncate text-[12px] text-ink-400">
+                    <p className="mt-1 truncate text-[13px] text-ink-400">
                       {a.employer} · {d(a.date)}
                     </p>
                   </div>
@@ -147,13 +149,13 @@ export default function Overview() {
         bodyClass=""
         className="mt-6"
         action={
-          <Link to="/offres" className="text-[12.5px] text-vert-700 hover:underline">
+          <Link to="/offres" className="text-[13.5px] text-vert-700 hover:underline">
             {t('dash.seeAll')}
           </Link>
         }
       >
         {suggested.length === 0 ? (
-          <p className="px-6 py-10 text-center text-[13.5px] text-ink-400">{t('common.empty')}</p>
+          <p className="px-6 py-10 text-center text-[14.5px] text-ink-400">{t('common.empty')}</p>
         ) : (
           <ul className="divide-y divide-sand-200">
             {suggested.map((j) => (
@@ -161,17 +163,17 @@ export default function Overview() {
                 <div className="min-w-0 flex-1">
                   <Link
                     to={`/offres/${j.id}`}
-                    className="block truncate text-[14px] font-medium text-ink transition-colors hover:text-vert-700"
+                    className="block truncate text-[15px] font-medium text-ink transition-colors hover:text-vert-700"
                   >
                     {j.title}
                   </Link>
-                  <p className="mt-1 text-[12px] text-ink-400">
+                  <p className="mt-1 text-[13px] text-ink-400">
                     {t(`cities.${j.city}`)}
                     {j.contract && <> · {t(`contracts.${j.contract}`)}</>}
                   </p>
                 </div>
                 <p className="font-display text-[16px] text-vert-700 tabular-nums">
-                  {n(j.salary)} <span className="text-[11px] text-ink-400">MRU</span>
+                  {n(j.salary)} <span className="text-[12px] text-ink-400">MRU</span>
                 </p>
                 <Button size="sm" to={`/offres/${j.id}`} variant="outline">
                   {t('common.apply')}

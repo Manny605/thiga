@@ -7,3 +7,10 @@ dist
 .env
 .env.local
 .env.*.local
+
+# Journal de permissions de Claude Code : il consigne les commandes exécutées,
+# jetons d'accès compris.
+.claude/settings.local.json
+
+# Cache local de la CLI Supabase (lien de projet, versions)
+supabase/.temp/

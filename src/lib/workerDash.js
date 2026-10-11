@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient'
 export async function fetchMyApplications(workerId) {
   const { data, error } = await supabase
     .from('applications')
-    .select('id, status, created_at, job_id, jobs(title, city, profiles(full_name))')
+    .select('id, status, created_at, job_id, jobs(title, city, employer_id, profiles(full_name))')
     .eq('worker_id', workerId)
     .order('created_at', { ascending: false })
   if (error) throw error
@@ -16,6 +16,7 @@ export async function fetchMyApplications(workerId) {
     jobTitle: a.jobs?.title || '',
     jobCity: a.jobs?.city || '',
     employer: a.jobs?.profiles?.full_name || '',
+    employerId: a.jobs?.employer_id || null,
   }))
 }
 

@@ -7,6 +7,8 @@ import {
   fetchMyJobs, fetchRecentApplicants, setJobStatus, deleteJob, setApplicationStatus,
 } from '../../../lib/employerDash'
 import DashShell from '../../../components/dashboard/DashShell'
+import { avatarUrl } from '../../../lib/avatar'
+import { daysUntil } from '../../../lib/deadline'
 
 export const EMPLOYER_NAV = [
   { to: '/tableau-de-bord/employeur', end: true, icon: LayoutGrid, label: 'dash.overview' },
@@ -21,7 +23,7 @@ export function useEmployerDash() {
 }
 
 export default function EmployerLayout() {
-  const { t } = useI18n()
+  const { t, d } = useI18n()
   const { user, profile } = useAuth()
   const { pathname } = useLocation()
 
@@ -99,6 +101,16 @@ export default function EmployerLayout() {
         date: a.date,
         to: '/tableau-de-bord/employeur/candidatures',
       })),
+    // L'identifiant porte la date limite : la repousser fait renaître l'alerte.
+    ...jobs
+      .filter((j) => j.status === 'online' && j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 3)
+      .map((j) => ({
+        id: `job:${j.id}:expiring:${j.deadline}`,
+        title: t('notif.jobExpiring'),
+        body: `${j.title} · ${t('common.deadlineUntil')} ${d(j.deadline)}`,
+        date: j.deadline,
+        to: '/tableau-de-bord/employeur/annonces',
+      })),
     ...jobs
       .filter((j) => j.status === 'pending')
       .map((j) => ({
@@ -114,13 +126,14 @@ export default function EmployerLayout() {
     <DashShell
       space={t('dash.employer')}
       user={profile?.full_name || ''}
+      avatar={avatarUrl(profile?.avatar_path)}
       nav={nav}
       title={t(current.label)}
       notifications={notifications}
     >
-      {current.lede && <p className="-mt-2 mb-8 text-[13.5px] text-ink-600">{t(current.lede)}</p>}
+      {current.lede && <p className="-mt-2 mb-8 text-[14.5px] text-ink-600">{t(current.lede)}</p>}
       {loadError && (
-        <p className="mb-6 border border-ocre-300 bg-ocre-100 px-4 py-3 text-[13px] text-ocre-700">{loadError}</p>
+        <p className="mb-6 rounded-xl border border-ocre-300 bg-ocre-100 px-4 py-3 text-[14px] text-ocre-700">{loadError}</p>
       )}
       <Outlet context={ctx} />
     </DashShell>

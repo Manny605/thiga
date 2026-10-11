@@ -1,37 +1,29 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { SlidersHorizontal } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider'
 import { useTrades } from '../trades/TradesProvider'
 import { CITIES } from '../data/mock'
-import { fetchWorkers } from '../lib/workers'
+import { searchWorkers } from '../lib/workers'
+import { usePagedSearch } from '../lib/usePagedSearch'
+import { useDocumentMeta } from '../lib/useDocumentMeta'
+import SearchField from '../components/SearchField'
+import Button from '../components/ui/Button'
 import PageHeader from '../components/layout/PageHeader'
 import WorkerCard from '../components/WorkerCard'
 import EmptyState from '../components/EmptyState'
 import Reveal from '../components/ui/Reveal'
-import { Checkbox, Select } from '../components/ui/Field'
+import { Select } from '../components/ui/Field'
 
 export default function Workers() {
   const { t, n } = useI18n()
   const { visibleTrades, tradeLabel } = useTrades()
   const [params, setParams] = useSearchParams()
   const [openFilters, setOpenFilters] = useState(false)
-  const [workers, setWorkers] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-    fetchWorkers()
-      .then((rows) => { if (!cancelled) setWorkers(rows) })
-      .catch(() => { if (!cancelled) setWorkers([]) })
-      .finally(() => { if (!cancelled) setLoading(false) })
-    return () => { cancelled = true }
-  }, [])
 
   const trade = params.get('metier') || ''
   const city = params.get('ville') || ''
   const minExp = params.get('exp') || ''
-  const verifiedOnly = params.get('verifie') === '1'
   const sort = params.get('tri') || 'recent'
 
   const set = (key, val) => {
@@ -43,21 +35,12 @@ export default function Workers() {
 
   const reset = () => setParams(new URLSearchParams(), { replace: true })
 
-  const list = useMemo(() => {
-    let out = workers.filter(
-      (w) =>
-        (!trade || w.trade === trade) &&
-        (!city || w.city === city) &&
-        (!minExp || w.years >= Number(minExp)) &&
-        (!verifiedOnly || w.verified)
-    )
-    out = [...out].sort((a, b) =>
-      sort === 'exp' ? b.years - a.years : b.lastActive.localeCompare(a.lastActive)
-    )
-    return out
-  }, [workers, trade, city, minExp, verifiedOnly, sort])
+  const q = params.get('q') || ''
+  const { items: list, count, loading, loadingMore, hasMore, loadMore } = usePagedSearch(searchWorkers, { q, trade, city, minExp, sort })
 
-  const activeCount = [trade, city, minExp, verifiedOnly ? '1' : ''].filter(Boolean).length
+  useDocumentMeta(t('workers.title'), t('workers.lede'))
+
+  const activeCount = [q, trade, city, minExp].filter(Boolean).length
 
   const filters = (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -96,40 +79,45 @@ export default function Workers() {
       {/* Barre de filtres */}
       <section className="sticky top-20 z-30 border-b border-sand-200/70 bg-sand-50/80 backdrop-blur-xl">
         <div className="shell py-4">
+          <div className="mb-4">
+            <SearchField
+              id="workers-search"
+              value={q}
+              onChange={(v) => set('q', v)}
+              label={t('common.search')}
+              clearLabel={t('common.clear')}
+              placeholder={t('workers.searchPlaceholder')}
+            />
+          </div>
           <div className="flex items-center justify-between gap-4 lg:hidden">
             <button
               onClick={() => setOpenFilters((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-[13px] font-medium shadow-sm"
+              className="inline-flex items-center gap-2 rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-[14px] font-medium shadow-sm"
             >
               <SlidersHorizontal className="h-4 w-4" />
               {t('common.filters')}
               {activeCount > 0 && (
-                <span className="grid h-5 w-5 place-items-center rounded-full bg-vert-700 text-[11px] text-sand-50">
+                <span className="grid h-5 w-5 place-items-center rounded-full bg-vert-700 text-[12px] text-sand-50">
                   {activeCount}
                 </span>
               )}
             </button>
-            <p className="text-[13px] text-ink-400">
-              <span className="font-medium text-ink">{n(list.length)}</span> {t('common.results')}
+            <p className="text-[14px] text-ink-400">
+              <span className="font-medium text-ink">{n(count)}</span> {t('common.results')}
             </p>
           </div>
 
           <div className={`${openFilters ? 'mt-4 block' : 'hidden'} lg:mt-0 lg:block`}>{filters}</div>
 
           <div className="mt-4 hidden items-center justify-between lg:flex">
-            <p className="text-[13px] text-ink-400">
-              <span className="font-medium text-ink">{n(list.length)}</span> {t('common.results')}
+            <p className="text-[14px] text-ink-400">
+              <span className="font-medium text-ink">{n(count)}</span> {t('common.results')}
             </p>
             <div className="flex items-center gap-5">
-              <Checkbox
-                label={t('workers.onlyVerified')}
-                checked={verifiedOnly}
-                onChange={(e) => set('verifie', e.target.checked ? '1' : '')}
-              />
               {activeCount > 0 && (
                 <button
                   onClick={reset}
-                  className="border-b border-ink-400 pb-0.5 text-[12.5px] text-ink-600 transition-colors hover:border-vert-700 hover:text-vert-700"
+                  className="border-b border-ink-400 pb-0.5 text-[13.5px] text-ink-600 transition-colors hover:border-vert-700 hover:text-vert-700"
                 >
                   {t('common.reset')}
                 </button>
@@ -143,7 +131,7 @@ export default function Workers() {
       <section className="shell py-12 md:py-16">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {loading ? (
-            <p className="col-span-full text-center text-[13.5px] text-ink-400">{t('common.loading')}</p>
+            <p className="col-span-full text-center text-[14.5px] text-ink-400">{t('common.loading')}</p>
           ) : list.length === 0 ? (
             <EmptyState onReset={reset} />
           ) : (
@@ -154,6 +142,17 @@ export default function Workers() {
             ))
           )}
         </div>
+
+        {!loading && hasMore && (
+          <div className="mt-10 flex flex-col items-center gap-2">
+            <Button variant="outline" onClick={loadMore} disabled={loadingMore}>
+              {loadingMore ? t('common.loading') : t('common.loadMore')}
+            </Button>
+            <p className="text-[13px] text-ink-400">
+              {t('common.shown')} {n(list.length)} / {n(count)}
+            </p>
+          </div>
+        )}
       </section>
     </>
   )

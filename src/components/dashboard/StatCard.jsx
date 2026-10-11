@@ -13,7 +13,7 @@ export default function StatCard({ icon: Icon, label, value, trend, delay = 0 })
         </span>
         {trend != null && (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11.5px] font-semibold tabular-nums ${
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[12.5px] font-semibold tabular-nums ${
               trend >= 0 ? 'bg-vert-50 text-vert-600' : 'bg-ocre-100 text-ocre-700'
             }`}
           >
@@ -22,7 +22,7 @@ export default function StatCard({ icon: Icon, label, value, trend, delay = 0 })
         )}
       </div>
       <p className="relative mt-6 font-display text-[34px] leading-none text-ink tabular-nums">{value}</p>
-      <p className="relative mt-2 text-[13px] text-ink-400">{label}</p>
+      <p className="relative mt-2 text-[14px] text-ink-400">{label}</p>
     </Reveal>
   )
 }

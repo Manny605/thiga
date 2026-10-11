@@ -68,7 +68,7 @@ function TradeForm({ trade, existingIds, onSaved, onCancel }) {
         />
 
         <div>
-          <span className="mb-1.5 block text-[13px] font-medium text-ink-800">{t('admin.tradeIcon')}</span>
+          <span className="mb-1.5 block text-[14px] font-medium text-ink-800">{t('admin.tradeIcon')}</span>
           <div className="flex flex-wrap gap-1.5">
             {ICON_NAMES.map((name) => (
               <button
@@ -90,12 +90,12 @@ function TradeForm({ trade, existingIds, onSaved, onCancel }) {
           </div>
         </div>
 
-        <p className="text-[12.5px] text-ink-400">
+        <p className="text-[13.5px] text-ink-400">
           {t('admin.tradeSlug')} : <span className="font-mono text-ink-600">{slug || '—'}</span>
           {!editing && <> · {t('admin.tradeSlugHint')}</>}
         </p>
 
-        {error && <p className="text-[13px] text-red-600">{error}</p>}
+        {error && <p className="text-[14px] text-red-600">{error}</p>}
 
         <div className="flex gap-3">
           <Button type="submit" size="sm" disabled={submitting || !labelFr.trim()}>
@@ -168,8 +168,8 @@ export default function Categories() {
         />
       )}
 
-      {message && <p className="mb-6 text-[13px] text-vert-700">{message}</p>}
-      {error && <p className="mb-6 text-[13px] text-red-600">{error}</p>}
+      {message && <p className="mb-6 text-[14px] text-vert-700">{message}</p>}
+      {error && <p className="mb-6 text-[14px] text-red-600">{error}</p>}
 
       <Panel title={t('dash.tradesAdmin')} bodyClass="">
         <div className="grid gap-px bg-sand-200 sm:grid-cols-2 xl:grid-cols-3">
@@ -191,10 +191,10 @@ export default function Categories() {
                   </span>
 
                   <div className="min-w-0 flex-1">
-                    <p className={`truncate text-[14px] font-medium ${off ? 'text-ink-400' : 'text-ink'}`}>
+                    <p className={`truncate text-[15px] font-medium ${off ? 'text-ink-400' : 'text-ink'}`}>
                       {tradeLabel(tr.id)}
                     </p>
-                    <p className="mt-0.5 truncate text-[11.5px] text-ink-400">
+                    <p className="mt-0.5 truncate text-[12.5px] text-ink-400">
                       {n(counts.workers)} {t('admin.usageWorkers')} · {n(counts.jobs)} {t('admin.usageJobs')} ·{' '}
                       {off ? t('dash.hidden') : t('dash.visible')}
                     </p>
@@ -239,19 +239,19 @@ export default function Categories() {
 
                 {confirmingId === tr.id && (
                   <div className="mt-3 flex flex-wrap items-center gap-3 border-s-2 border-ocre-500 bg-ocre-100/50 px-4 py-3">
-                    <p className="flex-1 text-[12.5px] text-ocre-700">{t('admin.deleteTradeConfirm')}</p>
+                    <p className="flex-1 text-[13.5px] text-ocre-700">{t('admin.deleteTradeConfirm')}</p>
                     <button
                       onClick={() => {
                         setConfirmingId(null)
                         run(() => deleteTrade(tr.id), t('admin.tradeDeleted'))
                       }}
-                      className="h-8 rounded-lg bg-ocre-700 px-3 text-[12.5px] font-medium text-white transition-colors hover:bg-ocre-500"
+                      className="h-8 rounded-lg bg-ocre-700 px-3 text-[13.5px] font-medium text-white transition-colors hover:bg-ocre-500"
                     >
                       {t('dash.confirmDelete')}
                     </button>
                     <button
                       onClick={() => setConfirmingId(null)}
-                      className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[12.5px] text-ink-600 transition-colors hover:text-ink"
+                      className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[13.5px] text-ink-600 transition-colors hover:text-ink"
                     >
                       {t('dash.cancel')}
                     </button>

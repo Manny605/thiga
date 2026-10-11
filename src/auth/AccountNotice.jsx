@@ -21,12 +21,12 @@ export default function AccountNotice({ title, lede }) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-sand-50 px-5">
-      <div className="w-full max-w-sm animate-rise border border-sand-200 bg-white p-8 text-center">
+      <div className="w-full max-w-sm animate-rise rounded-3xl border border-sand-200 bg-white p-8 text-center shadow-card">
         <span className="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-ocre-100 text-ocre-700">
           <ShieldOff className="h-5 w-5" strokeWidth={1.5} />
         </span>
         <h1 className="mt-5 text-[22px] leading-tight">{title}</h1>
-        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-600">{lede}</p>
+        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">{lede}</p>
         <Button onClick={handleLogout} variant="outline" size="sm" className="mt-7 w-full">
           {t('dash.logout')}
         </Button>

@@ -47,11 +47,11 @@ export default function About() {
           <div className="mt-14 grid gap-4 sm:grid-cols-2">
             {t('about.values').map((v, i) => (
               <Reveal key={v.t} delay={i * 80} className="rounded-2xl border border-sand-200/70 bg-sand-50/60 p-8 md:p-10">
-                <span className="font-display text-[13px] text-ocre-500 tabular-nums">
+                <span className="font-display text-[14px] text-ocre-500 tabular-nums">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-4 text-[22px] leading-snug">{v.t}</h3>
-                <p className="mt-3 max-w-sm text-[14.5px] leading-relaxed text-ink-600">{v.d}</p>
+                <p className="mt-3 max-w-sm text-[15.5px] leading-relaxed text-ink-600">{v.d}</p>
               </Reveal>
             ))}
           </div>
@@ -64,7 +64,7 @@ export default function About() {
         <div className="mt-12 flex flex-wrap gap-2.5">
           {CITIES.map((c, i) => (
             <Reveal key={c} delay={i * 35}>
-              <span className="rounded-full border border-sand-200/70 bg-white px-4 py-2.5 text-[14px] text-ink-600 shadow-sm transition-colors hover:border-vert-200 hover:text-vert-700">
+              <span className="rounded-full border border-sand-200/70 bg-white px-4 py-2.5 text-[15px] text-ink-600 shadow-sm transition-colors hover:border-vert-200 hover:text-vert-700">
                 {t(`cities.${c}`)}
               </span>
             </Reveal>
@@ -79,7 +79,7 @@ export default function About() {
                   <p className="font-display text-[clamp(1.9rem,4vw,2.6rem)] leading-none text-vert-700 tabular-nums">
                     {n(v)}
                   </p>
-                  <p className="mt-2.5 text-[12.5px] text-ink-400">{t(`home.stats.${k}`)}</p>
+                  <p className="mt-2.5 text-[13.5px] text-ink-400">{t(`home.stats.${k}`)}</p>
                 </Reveal>
               )
             )}

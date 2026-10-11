@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { BadgeCheck, Search, ShieldOff, ShieldCheck, Undo2 } from 'lucide-react'
+import { BadgeCheck, ImageOff, Search, ShieldOff, ShieldCheck, Undo2 } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useTrades } from '../../../trades/TradesProvider'
 import { CITIES } from '../../../data/mock'
@@ -46,12 +46,12 @@ export default function Users() {
 
   return (
     <>
-      {error && <p className="mb-6 text-[13px] text-red-600">{error}</p>}
+      {error && <p className="mb-6 text-[14px] text-red-600">{error}</p>}
 
       {/* Filtres */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <label className="relative block">
-          <span className="mb-1.5 block text-[13px] font-medium text-ink-800">{t('common.search')}</span>
+          <span className="mb-1.5 block text-[14px] font-medium text-ink-800">{t('common.search')}</span>
           <Search className="pointer-events-none absolute bottom-3.5 start-3.5 h-4 w-4 text-ink-400" />
           <input
             value={q}
@@ -87,16 +87,16 @@ export default function Users() {
         bodyClass=""
         className="mt-6"
         action={
-          <span className="text-[12.5px] text-ink-400">
+          <span className="text-[13.5px] text-ink-400">
             <span className="font-medium text-ink">{n(list.length)}</span> {t('common.results')}
           </span>
         }
       >
         {/* Tableau (desktop) */}
         <div className="hidden overflow-x-auto lg:block">
-          <table className="w-full text-start text-[13px]">
+          <table className="w-full text-start text-[14px]">
             <thead>
-              <tr className="border-b border-sand-200/70 bg-sand-50/50 text-[11px] uppercase tracking-[0.1em] text-ink-400">
+              <tr className="border-b border-sand-200/70 bg-sand-50/50 text-[12px] uppercase tracking-[0.1em] text-ink-400">
                 <th className="px-6 py-3 text-start font-medium">{t('contact.name')}</th>
                 <th className="px-6 py-3 text-start font-medium">{t('admin.role')}</th>
                 <th className="px-6 py-3 text-start font-medium">{t('common.city')}</th>
@@ -110,7 +110,7 @@ export default function Users() {
                 <tr key={u.id} className="transition-colors hover:bg-sand-50/70">
                   <td className="px-6 py-3.5">
                     <span className="flex items-center gap-3">
-                      <Avatar name={u.name} size="sm" />
+                      <Avatar name={u.name} src={u.avatar} size="sm" />
                       <span className="flex items-center gap-1.5 font-medium text-ink">
                         {u.name}
                         {u.verified && <BadgeCheck className="h-3.5 w-3.5 text-vert-600" />}
@@ -142,13 +142,13 @@ export default function Users() {
           {list.map((u) => (
             <li key={u.id} className="px-6 py-4">
               <div className="flex items-center gap-3.5">
-                <Avatar name={u.name} size="sm" />
+                <Avatar name={u.name} src={u.avatar} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 truncate text-[13.5px] font-medium text-ink">
+                  <p className="flex items-center gap-1.5 truncate text-[14.5px] font-medium text-ink">
                     {u.name}
                     {u.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-vert-600" />}
                   </p>
-                  <p className="mt-0.5 truncate text-[11.5px] text-ink-400">
+                  <p className="mt-0.5 truncate text-[12.5px] text-ink-400">
                     {t(`admin.${u.role}`)}{u.city ? ` · ${t(`cities.${u.city}`)}` : ''}
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export default function Users() {
         </ul>
 
         {list.length === 0 && (
-          <p className="px-6 py-14 text-center text-[13.5px] text-ink-400">{t('common.empty')}</p>
+          <p className="px-6 py-14 text-center text-[14.5px] text-ink-400">{t('common.empty')}</p>
         )}
       </Panel>
     </>
@@ -203,6 +203,16 @@ function RowActions({ u, patchUser, t }) {
           className={`${btn} border-sand-300 bg-white text-ink-400 hover:border-ocre-500 hover:text-ocre-700`}
         >
           <ShieldOff className="h-4 w-4" />
+        </button>
+      )}
+
+      {u.avatarPath && (
+        <button
+          onClick={() => patchUser(u.id, { avatar: null })}
+          title={t('admin.removeAvatar')}
+          className={`${btn} border-sand-300 bg-white text-ink-400 hover:border-ocre-500 hover:text-ocre-700`}
+        >
+          <ImageOff className="h-4 w-4" />
         </button>
       )}
     </>

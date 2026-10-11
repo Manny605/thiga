@@ -49,13 +49,13 @@ export default function Moderation() {
             <button
               key={x.id}
               onClick={() => setTab(x.id)}
-              className={`relative -mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-[13.5px] transition-colors ${
+              className={`relative -mb-px flex items-center gap-2 border-b-2 px-4 py-3 text-[14.5px] transition-colors ${
                 on ? 'border-vert-700 text-vert-700' : 'border-transparent text-ink-400 hover:text-ink'
               }`}
             >
               {x.id === 'all' ? t('dash.queue') : t(x.label)}
               <span
-                className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[10.5px] ${
+                className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] ${
                   on ? 'bg-vert-700 text-sand-50' : 'bg-sand-200 text-ink-600'
                 }`}
               >
@@ -66,11 +66,11 @@ export default function Moderation() {
         })}
       </div>
 
-      {error && <p className="mt-6 text-[13px] text-red-600">{error}</p>}
+      {error && <p className="mt-6 text-[14px] text-red-600">{error}</p>}
 
       <Panel bodyClass="" className="mt-6">
         {list.length === 0 ? (
-          <p className="px-6 py-16 text-center text-[13.5px] text-ink-400">{t('dash.noQueue')}</p>
+          <p className="px-6 py-16 text-center text-[14.5px] text-ink-400">{t('dash.noQueue')}</p>
         ) : (
           <ul className="divide-y divide-sand-200">
             {list.map((q) => (
@@ -84,9 +84,9 @@ export default function Moderation() {
                 </span>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-medium text-ink">{q.label}</p>
-                  <p className="mt-1 truncate text-[12px] text-ink-400">
-                    {t(`dash.${q.kind === 'job' ? 'job' : 'profile'}`)} ·{' '}
+                  <p className="truncate text-[15px] font-medium text-ink">{q.label}</p>
+                  <p className="mt-1 truncate text-[13px] text-ink-400">
+                    {q.kind === 'job' ? t('dash.job') : `${t('dash.profile')} ${t(`admin.${q.role}`).toLowerCase()}`} ·{' '}
                     {q.kind === 'job' ? q.by : q.by && t(`cities.${q.by}`)} · {d(q.date)}
                   </p>
                 </div>
@@ -94,7 +94,7 @@ export default function Moderation() {
                 {q.kind === 'job' ? (
                   <Link
                     to={`/offres/${q.ref}`}
-                    className="flex items-center gap-1.5 text-[12.5px] text-ink-600 transition-colors hover:text-vert-700"
+                    className="flex items-center gap-1.5 text-[13.5px] text-ink-600 transition-colors hover:text-vert-700"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     {t('dash.inspect')}
@@ -102,7 +102,7 @@ export default function Moderation() {
                 ) : (
                   <button
                     onClick={() => viewDocument(q.documentPath)}
-                    className="flex items-center gap-1.5 text-[12.5px] text-ink-600 transition-colors hover:text-vert-700"
+                    className="flex items-center gap-1.5 text-[13.5px] text-ink-600 transition-colors hover:text-vert-700"
                   >
                     <FileText className="h-3.5 w-3.5" />
                     {t('admin.viewDocument')}
@@ -112,14 +112,14 @@ export default function Moderation() {
                 <div className="flex shrink-0 gap-2">
                   <button
                     onClick={() => resolve(q.id, 'approve')}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-vert-100 bg-vert-50 px-3 text-[12.5px] font-medium text-vert-700 transition-colors hover:bg-vert-700 hover:text-sand-50"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-vert-100 bg-vert-50 px-3 text-[13.5px] font-medium text-vert-700 transition-colors hover:bg-vert-700 hover:text-sand-50"
                   >
                     <Check className="h-4 w-4" />
                     {t('dash.approve')}
                   </button>
                   <button
                     onClick={() => resolve(q.id, 'reject')}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-sand-300 bg-white px-3 text-[12.5px] font-medium text-ink-600 transition-colors hover:border-ocre-500 hover:text-ocre-700"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-sand-300 bg-white px-3 text-[13.5px] font-medium text-ink-600 transition-colors hover:border-ocre-500 hover:text-ocre-700"
                   >
                     <X className="h-4 w-4" />
                     {t('dash.reject')}

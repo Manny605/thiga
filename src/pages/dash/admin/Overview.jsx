@@ -65,10 +65,10 @@ export default function Overview() {
               {n(signups.total)}
             </p>
             {signups.trend === null ? (
-              <p className="mt-2 text-[12px] text-ink-400">{t('admin.noTrend')}</p>
+              <p className="mt-2 text-[13px] text-ink-400">{t('admin.noTrend')}</p>
             ) : (
               <p
-                className={`mt-2 flex items-center gap-1.5 text-[12px] ${
+                className={`mt-2 flex items-center gap-1.5 text-[13px] ${
                   signups.trend < 0 ? 'text-ocre-700' : 'text-vert-600'
                 }`}
               >
@@ -93,22 +93,22 @@ export default function Overview() {
           bodyClass=""
           className="xl:col-span-6"
           action={
-            <Link to="/admin/utilisateurs" className="flex items-center gap-1.5 text-[12.5px] font-medium text-vert-700 hover:underline">
+            <Link to="/admin/utilisateurs" className="flex items-center gap-1.5 text-[13.5px] font-medium text-vert-700 hover:underline">
               {t('dash.seeAll')}
               <ArrowRight className="flip-rtl h-3.5 w-3.5" />
             </Link>
           }
         >
           {pendingUsers.length === 0 ? (
-            <p className="px-6 py-10 text-center text-[13.5px] text-ink-400">{t('dash.noQueue')}</p>
+            <p className="px-6 py-10 text-center text-[14.5px] text-ink-400">{t('dash.noQueue')}</p>
           ) : (
             <ul className="divide-y divide-sand-200">
               {pendingUsers.map((u) => (
                 <li key={u.id} className="flex items-center gap-3.5 px-6 py-4 transition-colors hover:bg-sand-50">
-                  <Avatar name={u.name} size="sm" />
+                  <Avatar name={u.name} src={u.avatar} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13.5px] font-medium text-ink">{u.name}</p>
-                    <p className="mt-0.5 text-[11.5px] text-ink-400">
+                    <p className="truncate text-[14.5px] font-medium text-ink">{u.name}</p>
+                    <p className="mt-0.5 text-[12.5px] text-ink-400">
                       {t(`admin.${u.role}`)}{u.city ? ` · ${t(`cities.${u.city}`)}` : ''}
                     </p>
                   </div>
@@ -123,10 +123,10 @@ export default function Overview() {
           <ul className="divide-y divide-sand-200">
             {latest.map((u) => (
               <li key={u.id} className="flex items-center gap-3.5 px-6 py-4 transition-colors hover:bg-sand-50">
-                <Avatar name={u.name} size="sm" />
+                <Avatar name={u.name} src={u.avatar} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13.5px] font-medium text-ink">{u.name}</p>
-                  <p className="mt-0.5 text-[11.5px] text-ink-400">
+                  <p className="truncate text-[14.5px] font-medium text-ink">{u.name}</p>
+                  <p className="mt-0.5 text-[12.5px] text-ink-400">
                     {t('admin.joined')} {d(u.joined)}
                   </p>
                 </div>

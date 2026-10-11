@@ -9,6 +9,7 @@ import {
   fetchReports, closeReport as closeReportRequest, deleteJob,
 } from '../../../lib/admin'
 import DashShell from '../../../components/dashboard/DashShell'
+import { avatarUrl, removeAvatar } from '../../../lib/avatar'
 
 export const ADMIN_NAV = [
   { to: '/admin', end: true, icon: LayoutGrid, label: 'dash.overview', lede: 'admin.overviewLede' },
@@ -64,7 +65,7 @@ export default function AdminLayout() {
         if (item.kind === 'job') {
           await resolveJob(item.ref, decision)
         } else {
-          await resolveVerification(item.ref, item.employerId, decision)
+          await resolveVerification(item.ref, item.profileId, item.role, decision)
         }
         setQueue((q) => q.filter((x) => x.id !== id))
         // Le statut d'une annonce ou d'un compte vient de changer : la liste
@@ -95,7 +96,9 @@ export default function AdminLayout() {
         if (!u) return
         if ('verified' in patch) await setUserVerified(id, u.role, patch.verified)
         if ('status' in patch) await setUserStatus(id, patch.status)
-        setUsers((list) => list.map((x) => (x.id === id ? { ...x, ...patch } : x)))
+        if ('avatar' in patch && patch.avatar === null) await removeAvatar(id, u.avatarPath)
+        const local = 'avatar' in patch ? { ...patch, avatarPath: null } : patch
+        setUsers((list) => list.map((x) => (x.id === id ? { ...x, ...local } : x)))
       },
     }),
     [queue, reports, users, load]
@@ -137,13 +140,14 @@ export default function AdminLayout() {
       variant="admin"
       space={t('dash.admin')}
       user={profile?.full_name || ''}
+      avatar={avatarUrl(profile?.avatar_path)}
       nav={nav}
       title={t(current.label)}
       notifications={notifications}
     >
-      <p className="-mt-2 mb-8 text-[13.5px] text-ink-600">{t(current.lede)}</p>
+      <p className="-mt-2 mb-8 text-[14.5px] text-ink-600">{t(current.lede)}</p>
       {loadError && (
-        <p className="mb-6 border border-ocre-300 bg-ocre-100 px-4 py-3 text-[13px] text-ocre-700">{loadError}</p>
+        <p className="mb-6 rounded-xl border border-ocre-300 bg-ocre-100 px-4 py-3 text-[14px] text-ocre-700">{loadError}</p>
       )}
       <Outlet context={ctx} />
     </DashShell>

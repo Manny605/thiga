@@ -6,6 +6,7 @@ const TONES = {
   new: 'bg-vert-600 text-white',
   seen: 'bg-sand-100 text-ink-600',
   shortlisted: 'bg-vert-50 text-vert-700',
+  hired: 'bg-vert-700 text-sand-50',
   rejected: 'bg-sand-100 text-ink-400',
   high: 'bg-ocre-500 text-white',
   medium: 'bg-ocre-100 text-ocre-700',
@@ -19,6 +20,7 @@ const DOTS = {
   new: 'bg-white',
   seen: 'bg-ink-400',
   shortlisted: 'bg-vert-600',
+  hired: 'bg-ocre-300',
   rejected: 'bg-ink-400/60',
   high: 'bg-white',
   medium: 'bg-ocre-500',
@@ -28,7 +30,7 @@ const DOTS = {
 export default function StatusPill({ status, children }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none ${
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-semibold leading-none ${
         TONES[status] || TONES.seen
       }`}
     >
