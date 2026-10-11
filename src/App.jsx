@@ -12,7 +12,10 @@ import Workers from './pages/Workers'
 import WorkerDetail from './pages/WorkerDetail'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import About from './pages/About'
+import Legal from './pages/Legal'
 import NotFound from './pages/NotFound'
 import EmployerLayout from './pages/dash/employer/EmployerLayout'
 import EmployerOverview from './pages/dash/employer/Overview'
@@ -55,7 +58,14 @@ export default function App() {
                 <Route path="travailleurs/:id" element={<WorkerDetail />} />
                 <Route path="connexion" element={<PublicOnly><Login /></PublicOnly>} />
                 <Route path="inscription" element={<PublicOnly><Register /></PublicOnly>} />
+                <Route path="mot-de-passe-oublie" element={<PublicOnly><ForgotPassword /></PublicOnly>} />
+                {/* Hors PublicOnly : le lien reçu ouvre une session de récupération,
+                    qui renverrait sinon l'utilisateur vers son portail. */}
+                <Route path="nouveau-mot-de-passe" element={<ResetPassword />} />
                 <Route path="a-propos" element={<PublicOnly><About /></PublicOnly>} />
+                <Route path="mentions-legales" element={<Legal doc="mentions-legales" />} />
+                <Route path="confidentialite" element={<Legal doc="confidentialite" />} />
+                <Route path="conditions" element={<Legal doc="conditions" />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
 

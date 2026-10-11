@@ -11,7 +11,7 @@ export default function RequireRole({ role, children }) {
   const location = useLocation()
 
   if (!ready) {
-    return <div className="grid min-h-screen place-items-center text-[13.5px] text-ink-400">{t('common.loading')}</div>
+    return <div className="grid min-h-screen place-items-center text-[14.5px] text-ink-400">{t('common.loading')}</div>
   }
 
   if (!isAuthenticated) {

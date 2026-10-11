@@ -14,7 +14,7 @@ import logoMark from '../../../assets/logo-removebg.png'
  * tout en gardant la même mise en page claire ("même look partout").
  */
 export default function DashShell({
-  variant = 'user', space, user, nav, title, action, notifications = [], children,
+  variant = 'user', space, user, avatar = null, nav, title, action, notifications = [], children,
 }) {
   const { t, toggle, other } = useI18n()
   const { signOut } = useAuth()
@@ -41,7 +41,7 @@ export default function DashShell({
 
   const itemCls = ({ isActive }) =>
     [
-      'group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium transition-all duration-200',
+      'group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14.5px] font-medium transition-all duration-200',
       isActive
         ? activeCls
         : 'text-ink-600 hover:bg-white hover:text-ink hover:shadow-sm',
@@ -56,7 +56,7 @@ export default function DashShell({
         <span className="font-display text-[16px] tracking-mark text-ink">THIGA</span>
       </div>
 
-      <p className="px-5 pb-3 pt-6 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-400">
+      <p className="px-5 pb-3 pt-6 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-ink-400">
         {space}
       </p>
 
@@ -68,7 +68,7 @@ export default function DashShell({
               <span className="flex-1 text-start">{t(item.label)}</span>
               {item.count > 0 && (
                 <span
-                  className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[10.5px] font-semibold ${countCls}`}
+                  className={`grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11.5px] font-semibold ${countCls}`}
                 >
                   {item.count}
                 </span>
@@ -104,7 +104,7 @@ export default function DashShell({
         {admin && (
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
           >
             <ArrowLeft className="flip-rtl h-4 w-4" strokeWidth={1.75} />
             {t('dash.backToSite')}
@@ -112,14 +112,14 @@ export default function DashShell({
         )}
         <button
           onClick={toggle}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
         >
           <Languages className="h-4 w-4" strokeWidth={1.75} />
           {other}
         </button>
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
         >
           <LogOut className="flip-rtl h-4 w-4" strokeWidth={1.75} />
           {t('dash.logout')}
@@ -164,8 +164,8 @@ export default function DashShell({
             <NotificationsBell items={notifications} variant={variant} />
 
             <div className="flex items-center gap-2.5 rounded-xl border border-sand-200 bg-white/70 py-1 ps-1 pe-3">
-              <Avatar name={user} size="sm" />
-              <span className="hidden text-[13px] font-medium text-ink-600 sm:block">{user}</span>
+              <Avatar name={user} src={avatar} size="sm" />
+              <span className="hidden text-[14px] font-medium text-ink-600 sm:block">{user}</span>
             </div>
           </div>
         </header>

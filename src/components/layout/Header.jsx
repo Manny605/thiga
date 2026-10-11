@@ -45,7 +45,7 @@ export default function Header() {
   }, [open])
 
   const linkCls = ({ isActive }) =>
-    `text-[14px] transition-colors ${
+    `text-[15px] transition-colors ${
       isActive ? 'font-medium text-vert-700' : 'text-ink-600 hover:text-ink'
     }`
 
@@ -69,7 +69,7 @@ export default function Header() {
           <div className="hidden items-center gap-3 xl:flex">
             <button
               onClick={toggle}
-              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[13px] font-medium text-ink-600 transition-colors hover:bg-sand-100 hover:text-ink"
+              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[14px] font-medium text-ink-600 transition-colors hover:bg-sand-100 hover:text-ink"
               aria-label={other}
             >
               <Languages className="h-4 w-4" />

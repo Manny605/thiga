@@ -81,7 +81,7 @@ export default function NotificationsBell({ items = [], variant = 'user' }) {
         <Bell className="h-4 w-4 text-ink-600" strokeWidth={1.75} />
         {unread.length > 0 && (
           <span
-            className={`absolute -end-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9.5px] font-semibold text-white ring-2 ring-sand-50 ${badgeCls}`}
+            className={`absolute -end-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10.5px] font-semibold text-white ring-2 ring-sand-50 ${badgeCls}`}
           >
             {unread.length > 9 ? '9+' : unread.length}
           </span>
@@ -97,7 +97,7 @@ export default function NotificationsBell({ items = [], variant = 'user' }) {
               {unread.length > 0 && (
                 <button
                   onClick={markAllSeen}
-                  className="text-[11.5px] text-vert-700 transition-colors hover:underline"
+                  className="text-[12.5px] text-vert-700 transition-colors hover:underline"
                 >
                   {t('notif.markAll')}
                 </button>
@@ -105,7 +105,7 @@ export default function NotificationsBell({ items = [], variant = 'user' }) {
             </header>
 
             {sorted.length === 0 ? (
-              <p className="px-4 py-8 text-center text-[13px] text-ink-400">{t('notif.empty')}</p>
+              <p className="px-4 py-8 text-center text-[14px] text-ink-400">{t('notif.empty')}</p>
             ) : (
               <ul className="max-h-80 divide-y divide-sand-200/70 overflow-y-auto">
                 {sorted.slice(0, 12).map((item) => {
@@ -125,10 +125,10 @@ export default function NotificationsBell({ items = [], variant = 'user' }) {
                           }`}
                         />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-[12.5px] font-medium text-ink">{item.title}</span>
-                          <span className="mt-0.5 block truncate text-[11.5px] text-ink-600">{item.body}</span>
+                          <span className="block text-[13.5px] font-medium text-ink">{item.title}</span>
+                          <span className="mt-0.5 block truncate text-[12.5px] text-ink-600">{item.body}</span>
                           {item.date && (
-                            <span className="mt-0.5 block text-[11px] text-ink-400">{d(item.date)}</span>
+                            <span className="mt-0.5 block text-[12px] text-ink-400">{d(item.date)}</span>
                           )}
                         </span>
                       </Link>

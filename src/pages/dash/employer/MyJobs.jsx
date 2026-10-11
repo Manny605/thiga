@@ -5,6 +5,7 @@ import { useI18n } from '../../../i18n/I18nProvider'
 import { useAuth } from '../../../auth/AuthProvider'
 import { useTrades } from '../../../trades/TradesProvider'
 import { createJob, updateJob } from '../../../lib/employerDash'
+import { isExpired, todayUtc } from '../../../lib/deadline'
 import { CITIES, CONTRACTS } from '../../../data/mock'
 import Panel from '../../../components/dashboard/Panel'
 import StatusPill from '../../../components/dashboard/StatusPill'
@@ -28,6 +29,7 @@ function JobForm({ employerId, job, onDone, onCancel }) {
   const [description, setDescription] = useState(job?.description || '')
   const [duties, setDuties] = useState((job?.duties || []).join('\n'))
   const [reqs, setReqs] = useState((job?.reqs || []).join('\n'))
+  const [deadline, setDeadline] = useState(job?.deadline || '')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -46,6 +48,7 @@ function JobForm({ employerId, job, onDone, onCancel }) {
       description: description.trim(),
       duties: duties.split('\n').map((s) => s.trim()).filter(Boolean),
       reqs: reqs.split('\n').map((s) => s.trim()).filter(Boolean),
+      deadline: deadline || null,
     }
     try {
       if (editing) {
@@ -112,10 +115,23 @@ function JobForm({ employerId, job, onDone, onCancel }) {
         <Textarea label={t('dash.dutiesLabel')} rows={3} value={duties} onChange={(e) => setDuties(e.target.value)} />
         <Textarea label={t('dash.reqsLabel')} rows={3} value={reqs} onChange={(e) => setReqs(e.target.value)} />
 
+        <div className="max-w-xs">
+          {/* Vide = pas de limite. Une date déjà passée reste acceptée à
+              l'enregistrement : l'annonce demeure simplement expirée. */}
+          <Input
+            label={t('dash.deadlineLabel')}
+            type="date"
+            min={job?.deadline && job.deadline < todayUtc() ? job.deadline : todayUtc()}
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+          />
+          <p className="mt-1.5 text-[13px] leading-relaxed text-ink-400">{t('dash.deadlineHint')}</p>
+        </div>
+
         {editing && job.status === 'online' && (
-          <p className="text-[12.5px] text-ink-400">{t('dash.editOnlineHint')}</p>
+          <p className="text-[13.5px] text-ink-400">{t('dash.editOnlineHint')}</p>
         )}
-        {error && <p className="text-[13px] text-red-600">{error}</p>}
+        {error && <p className="text-[14px] text-red-600">{error}</p>}
 
         <div className="flex gap-3">
           <Button type="submit" size="sm" disabled={submitting}>
@@ -131,7 +147,7 @@ function JobForm({ employerId, job, onDone, onCancel }) {
 }
 
 export default function MyJobs() {
-  const { t, n } = useI18n()
+  const { t, n, d } = useI18n()
   const { user } = useAuth()
   const { jobs, reload, closeJob, republishJob, removeJob } = useEmployerDash()
 
@@ -174,12 +190,12 @@ export default function MyJobs() {
         />
       )}
 
-      {message && <p className="mb-6 text-[13px] text-vert-700">{message}</p>}
-      {error && <p className="mb-6 text-[13px] text-red-600">{error}</p>}
+      {message && <p className="mb-6 text-[14px] text-vert-700">{message}</p>}
+      {error && <p className="mb-6 text-[14px] text-red-600">{error}</p>}
 
       <Panel title={t('dash.myJobs')} bodyClass="">
         {jobs.length === 0 ? (
-          <p className="px-6 py-10 text-center text-[13.5px] text-ink-400">{t('common.empty')}</p>
+          <p className="px-6 py-10 text-center text-[14.5px] text-ink-400">{t('common.empty')}</p>
         ) : (
           <ul className="divide-y divide-sand-200">
             {jobs.map((j) => (
@@ -188,16 +204,22 @@ export default function MyJobs() {
                   <div className="min-w-0 flex-1">
                     <Link
                       to={`/offres/${j.id}`}
-                      className="block truncate text-[14px] font-medium text-ink transition-colors hover:text-vert-700"
+                      className="block truncate text-[15px] font-medium text-ink transition-colors hover:text-vert-700"
                     >
                       {j.title}
                     </Link>
-                    <p className="mt-1 text-[12px] text-ink-400">
+                    <p className="mt-1 text-[13px] text-ink-400">
                       {t(`cities.${j.city}`)} · {n(j.appsCount)} {t('dash.apps').toLowerCase()}
+                      {j.deadline && !isExpired(j.deadline) && <> · {t('common.deadlineUntil')} {d(j.deadline)}</>}
                     </p>
                   </div>
 
-                  <StatusPill status={j.status}>{t(`jobStatus.${j.status}`)}</StatusPill>
+                  {/* En ligne mais expirée : l'annonce n'est plus visible, on le dit. */}
+                  {j.status === 'online' && isExpired(j.deadline) ? (
+                    <StatusPill status="closed">{t('jobStatus.expired')}</StatusPill>
+                  ) : (
+                    <StatusPill status={j.status}>{t(`jobStatus.${j.status}`)}</StatusPill>
+                  )}
 
                   <div className="flex shrink-0 gap-1.5">
                     <button
@@ -240,18 +262,18 @@ export default function MyJobs() {
                     candidatures reçues, elle ne doit pas tenir en un clic. */}
                 {confirmingId === j.id && (
                   <div className="mt-3 flex flex-wrap items-center gap-3 border-s-2 border-ocre-500 bg-ocre-100/50 px-4 py-3">
-                    <p className="flex-1 text-[12.5px] text-ocre-700">
+                    <p className="flex-1 text-[13.5px] text-ocre-700">
                       {t('dash.deleteJobConfirm')}
                     </p>
                     <button
                       onClick={() => { setConfirmingId(null); run(() => removeJob(j.id)) }}
-                      className="h-8 rounded-lg bg-ocre-700 px-3 text-[12.5px] font-medium text-white transition-colors hover:bg-ocre-500"
+                      className="h-8 rounded-lg bg-ocre-700 px-3 text-[13.5px] font-medium text-white transition-colors hover:bg-ocre-500"
                     >
                       {t('dash.confirmDelete')}
                     </button>
                     <button
                       onClick={() => setConfirmingId(null)}
-                      className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[12.5px] text-ink-600 transition-colors hover:text-ink"
+                      className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[13.5px] text-ink-600 transition-colors hover:text-ink"
                     >
                       {t('dash.cancel')}
                     </button>

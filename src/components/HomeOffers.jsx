@@ -64,7 +64,7 @@ export default function HomeOffers() {
     <section className="border-y border-sand-200/70 bg-sand-100/40">
       <div className="shell py-20 md:py-28">
         <SectionHeading
-          num="01"
+          num="02"
           kicker={t('nav.jobs')}
           title={t('home.featuredJobs')}
           action={
@@ -99,13 +99,13 @@ export default function HomeOffers() {
           </div>
 
           <div className="mt-4 flex items-center justify-between border-t border-sand-200 pt-4">
-            <p className="text-[13px] text-ink-400">
+            <p className="text-[14px] text-ink-400">
               <span className="font-medium text-ink">{n(list.length)}</span> {t('common.results')}
             </p>
             {activeCount > 0 && (
               <button
                 onClick={reset}
-                className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-600 transition-colors hover:text-vert-700"
+                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink-600 transition-colors hover:text-vert-700"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 {t('common.reset')}

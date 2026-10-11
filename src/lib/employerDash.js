@@ -1,9 +1,10 @@
 import { supabase } from './supabaseClient'
+import { avatarUrl } from './avatar'
 
 // Toutes les colonnes éditables : la liste alimente aussi le formulaire de
 // modification, qui doit être pré-rempli avec l'annonce existante.
 const JOB_FIELDS =
-  'id, title, trade, city, district, contract, salary, unit, status, description, duties, reqs, created_at'
+  'id, title, trade, city, district, contract, salary, unit, status, description, duties, reqs, created_at, deadline'
 
 function mapJobRow(row, appsCount = 0) {
   return {
@@ -20,6 +21,7 @@ function mapJobRow(row, appsCount = 0) {
     duties: row.duties || [],
     reqs: row.reqs || [],
     createdAt: row.created_at ? row.created_at.slice(0, 10) : '',
+    deadline: row.deadline || '',
     appsCount,
   }
 }
@@ -37,6 +39,7 @@ function jobPayload(payload) {
     description: payload.description || null,
     duties: payload.duties || [],
     reqs: payload.reqs || [],
+    deadline: payload.deadline || null,
   }
 }
 
@@ -73,7 +76,7 @@ export async function fetchRecentApplicants(employerId, limit) {
     .from('applications')
     .select(
       'id, status, message, cv_path, cv_name, created_at, job_id, worker_id, ' +
-      'jobs(title), worker:worker_id(full_name, worker_profiles(trade))'
+      'jobs(title), worker:worker_id(full_name, avatar_path, worker_profiles(trade))'
     )
     .in('job_id', jobIds)
     .order('created_at', { ascending: false })
@@ -94,6 +97,7 @@ export async function fetchRecentApplicants(employerId, limit) {
     jobTitle: a.jobs?.title || '',
     workerId: a.worker_id,
     workerName: a.worker?.full_name || '',
+    workerAvatar: avatarUrl(a.worker?.avatar_path),
     workerTrade: a.worker?.worker_profiles?.trade || '',
   }))
 }

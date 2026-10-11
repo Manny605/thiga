@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --rule: theme('colors.sand.300');
-    --grain: .035;
+    --grain: .025;
   }
 
   html {
@@ -14,12 +14,13 @@
   }
 
   body {
-    @apply bg-sand-50 text-ink font-sans font-light antialiased;
+    @apply bg-sand-50 text-ink font-sans font-normal antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Titres : Poppins léger en latin, Tajawal en arabe */
+  /* Titres : Poppins medium resserré en latin, Tajawal en arabe */
   h1, h2, h3, h4 {
-    @apply font-display font-light tracking-[-0.01em];
+    @apply font-display font-medium tracking-[-0.02em] text-ink;
   }
 
   [dir='rtl'] h1,
@@ -87,9 +88,15 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Étoile à huit branches — motif géométrique maure, très atténué */
+  /* Étoile à huit branches — motif géométrique maure, très atténué.
+     `.motif` sur fond clair, `.motif-light` sur les panneaux verts. */
   .motif {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%230F4C3A' stroke-width='1'%3E%3Cpath d='M32 4 44 20 60 32 44 44 32 60 20 44 4 32 20 20Z'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23004B2B' stroke-width='1'%3E%3Cpath d='M32 4 44 20 60 32 44 44 32 60 20 44 4 32 20 20Z'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 64px 64px;
+  }
+
+  .motif-light {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-width='1'%3E%3Cpath d='M32 4 44 20 60 32 44 44 32 60 20 44 4 32 20 20Z'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
     background-size: 64px 64px;
   }
 

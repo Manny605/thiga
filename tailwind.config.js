@@ -4,28 +4,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Template minimaliste noir & blanc : toute la palette est monochrome.
-        // Les noms (vert, ocre) sont conservés pour ne rien casser ailleurs ;
-        // seules leurs valeurs deviennent des gris — l'accent, c'est le noir.
+        // Sable chaud : fonds, filets, surfaces. Teinté vers l'ocre plutôt que
+        // gris neutre, pour rester dans la lumière du désert.
         sand: {
-          50: '#FAFAFA',
-          100: '#F4F4F5',
-          200: '#E4E4E7',
-          300: '#D4D4D8',
-          400: '#A1A1AA',
+          50: '#FBF8F3',
+          100: '#F5EFE5',
+          200: '#EAE2D4',
+          300: '#DBCFBC',
+          400: '#B3A690',
         },
+        // Encre brun-noir. ink-400 reste lisible (≈ 5:1 sur blanc) : c'est la
+        // couleur des textes secondaires, pas un gris décoratif.
         ink: {
-          DEFAULT: '#18181B',
-          800: '#27272A',
-          600: '#52525B',
-          400: '#A1A1AA',
+          DEFAULT: '#1D1A15',
+          800: '#2C2821',
+          600: '#4F483D',
+          400: '#776D5E',
         },
         // Vert de marque (#004B2B / #005332) — actions, liens, sections foncées.
         // Les nuances claires et les extrêmes foncés sont dérivés.
         vert: {
-          50: '#E6EFE9',
-          100: '#C2DBCC',
-          200: '#8BBAA0',
+          50: '#E8F1EC',
+          100: '#C8DDD0',
+          200: '#8FBBA2',
+          300: '#5C9A78',
           600: '#005332',
           700: '#004B2B',
           800: '#003A21',
@@ -33,8 +35,9 @@ export default {
         },
         // Or de marque (#A78B60 / #A18253) — badges, numéros, accents.
         ocre: {
-          100: '#EFE8DB',
-          300: '#A78B60',
+          50: '#F8F3EA',
+          100: '#F0E7D6',
+          300: '#C9AE80',
           500: '#A18253',
           700: '#7C6340',
         },
@@ -44,46 +47,21 @@ export default {
         sans: ['Poppins', '"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
         ar: ['Tajawal', '"IBM Plex Sans Arabic"', 'sans-serif'],
       },
-      // Poppins léger sur tout le produit : chaque graisse est décalée d'un cran
-      // vers le light, de sorte que même les `font-medium/semibold/bold`
-      // existants restent légers, tout en gardant une hiérarchie relative.
-      fontWeight: {
-        thin: '200',
-        extralight: '200',
-        light: '300',
-        normal: '300',
-        medium: '400',
-        semibold: '500',
-        bold: '600',
-        extrabold: '700',
-        black: '800',
-      },
       letterSpacing: {
         mark: '0.34em',
       },
-      // Zéro ombre : le style éditorial repose sur des filets fins, pas d'élévation.
+      // Ombres douces et chaudes : les cartes se détachent du fond sable sans
+      // effet de « flottement ». `lift` = survol, teinté du vert de marque.
       boxShadow: {
-        none: 'none',
-        sm: 'none',
-        DEFAULT: 'none',
-        md: 'none',
-        lg: 'none',
-        xl: 'none',
-        '2xl': 'none',
-        card: 'none',
-        lift: 'none',
+        sm: '0 1px 2px rgb(29 26 21 / 0.06)',
+        card: '0 1px 2px rgb(29 26 21 / 0.04), 0 6px 20px -8px rgb(29 26 21 / 0.10)',
+        lift: '0 2px 4px rgb(29 26 21 / 0.04), 0 22px 44px -16px rgb(0 75 43 / 0.22)',
+        glow: '0 0 0 4px rgb(0 75 43 / 0.10)',
       },
-      // Coins nets partout ; seul `full` reste rond (avatars, points, pastilles).
+      // Arrondis : valeurs Tailwind par défaut, sauf 2xl/3xl un peu plus ronds.
       borderRadius: {
-        none: '0',
-        sm: '0',
-        DEFAULT: '0',
-        md: '0',
-        lg: '0',
-        xl: '0',
-        '2xl': '0',
-        '3xl': '0',
-        full: '9999px',
+        '2xl': '1.125rem',
+        '3xl': '1.75rem',
       },
       keyframes: {
         rise: {

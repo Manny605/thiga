@@ -21,8 +21,14 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
       setSession(next)
+      // Si l'URL de retour n'est pas autorisée côté Supabase, le lien atterrit
+      // sur l'accueil, qui renvoie un connecté vers son portail : on ramène
+      // l'utilisateur sur la page où il choisit son nouveau mot de passe.
+      if (event === 'PASSWORD_RECOVERY' && window.location.pathname !== '/nouveau-mot-de-passe') {
+        window.location.assign('/nouveau-mot-de-passe')
+      }
     })
 
     return () => sub.subscription.unsubscribe()

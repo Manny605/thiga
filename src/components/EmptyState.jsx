@@ -9,11 +9,11 @@ export default function EmptyState({ onReset }) {
         <SearchX className="h-7 w-7" strokeWidth={1.25} />
       </span>
       <p className="mt-5 font-display text-xl text-ink">{t('common.empty')}</p>
-      <p className="mt-2 text-[13.5px] text-ink-400">{t('common.emptyHint')}</p>
+      <p className="mt-2 text-[14.5px] text-ink-400">{t('common.emptyHint')}</p>
       {onReset && (
         <button
           onClick={onReset}
-          className="mt-6 rounded-xl bg-vert-700 px-4 py-2 text-[13px] font-medium text-sand-50 shadow-sm transition-colors hover:bg-vert-800"
+          className="mt-6 rounded-xl bg-vert-700 px-4 py-2 text-[14px] font-medium text-sand-50 shadow-sm transition-colors hover:bg-vert-800"
         >
           {t('common.reset')}
         </button>

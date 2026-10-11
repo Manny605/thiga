@@ -34,11 +34,11 @@ export default function Reports() {
   }
 
   const actionBtn =
-    'inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border px-4 text-[13px] font-medium transition-colors'
+    'inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border px-4 text-[14px] font-medium transition-colors'
 
   return (
     <div className="grid gap-4">
-      {error && <p className="text-[13px] text-red-600">{error}</p>}
+      {error && <p className="text-[14px] text-red-600">{error}</p>}
 
       {reports.map((r) => {
         const key = (action) => `${r.id}:${action}`
@@ -53,8 +53,8 @@ export default function Reports() {
                   <StatusPill status={r.severity}>{t(`severity.${r.severity}`)}</StatusPill>
                   <StatusPill status="new">{t('admin.open')}</StatusPill>
                 </div>
-                <p className="mt-2.5 text-[13.5px] text-ink-600">{t(`reportReason.${r.reason}`)}</p>
-                <p className="mt-1.5 text-[12px] text-ink-400">
+                <p className="mt-2.5 text-[14.5px] text-ink-600">{t(`reportReason.${r.reason}`)}</p>
+                <p className="mt-1.5 text-[13px] text-ink-400">
                   {t(`dash.${isJob ? 'job' : 'profile'}`)} · {t('admin.reportedOn')} {d(r.date)}
                 </p>
 
@@ -62,7 +62,7 @@ export default function Reports() {
                 {isJob && r.jobId && (
                   <Link
                     to={`/offres/${r.jobId}`}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] text-ink-600 transition-colors hover:text-vert-700"
+                    className="mt-3 inline-flex items-center gap-1.5 text-[13.5px] text-ink-600 transition-colors hover:text-vert-700"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     {t('dash.inspect')}
@@ -71,7 +71,7 @@ export default function Reports() {
                 {!isJob && r.workerId && (
                   <Link
                     to={`/travailleurs/${r.workerId}`}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] text-ink-600 transition-colors hover:text-vert-700"
+                    className="mt-3 inline-flex items-center gap-1.5 text-[13.5px] text-ink-600 transition-colors hover:text-vert-700"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     {t('dash.inspect')}
@@ -136,16 +136,16 @@ export default function Reports() {
 function ConfirmRow({ label, confirmLabel, cancelLabel, onConfirm, onCancel }) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-3 border-s-2 border-ocre-500 bg-ocre-100/50 px-4 py-3">
-      <p className="flex-1 text-[12.5px] text-ocre-700">{label}</p>
+      <p className="flex-1 text-[13.5px] text-ocre-700">{label}</p>
       <button
         onClick={onConfirm}
-        className="h-8 rounded-lg bg-ocre-700 px-3 text-[12.5px] font-medium text-white transition-colors hover:bg-ocre-500"
+        className="h-8 rounded-lg bg-ocre-700 px-3 text-[13.5px] font-medium text-white transition-colors hover:bg-ocre-500"
       >
         {confirmLabel}
       </button>
       <button
         onClick={onCancel}
-        className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[12.5px] text-ink-600 transition-colors hover:text-ink"
+        className="h-8 rounded-lg border border-sand-300 bg-white px-3 text-[13.5px] text-ink-600 transition-colors hover:text-ink"
       >
         {cancelLabel}
       </button>

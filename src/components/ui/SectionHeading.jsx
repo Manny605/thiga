@@ -9,10 +9,10 @@ export default function SectionHeading({ num, kicker, title, lede, action, class
           {(num || kicker) && (
             <div className="mb-4 inline-flex items-center gap-2.5 rounded-full border border-sand-200 bg-white px-3 py-1 shadow-sm">
               {num && (
-                <span className="font-display text-[12px] text-ocre-500 tabular-nums">{num}</span>
+                <span className="font-display text-[13px] text-ocre-500 tabular-nums">{num}</span>
               )}
               {kicker && (
-                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-600">
+                <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-600">
                   {kicker}
                 </span>
               )}

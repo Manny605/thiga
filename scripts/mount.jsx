@@ -6,7 +6,8 @@ import { JSDOM } from 'jsdom'
 const ROUTES = [
   '/', '/offres', '/offres/j1', '/offres/inexistant',
   '/travailleurs', '/travailleurs/w5', '/travailleurs/zzz',
-  '/connexion', '/inscription', '/contact', '/a-propos', '/page-absente',
+  '/connexion', '/inscription', '/mot-de-passe-oublie', '/nouveau-mot-de-passe',
+  '/contact', '/a-propos', '/mentions-legales', '/confidentialite', '/conditions', '/page-absente',
   '/tableau-de-bord/employeur', '/tableau-de-bord/travailleur',
   '/admin', '/admin/utilisateurs', '/admin/moderation',
   '/admin/signalements', '/admin/categories',

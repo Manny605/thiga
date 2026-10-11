@@ -1,11 +1,12 @@
 import { supabase } from './supabaseClient'
+import { avatarUrl } from './avatar'
 
 // ── Utilisateurs ──────────────────────────────────────────────────────
 
 export async function fetchUsers() {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, role, full_name, city, status, created_at, worker_profiles(trade, verified), employer_profiles(verified)')
+    .select('id, role, full_name, city, status, avatar_path, created_at, worker_profiles(trade, verified), employer_profiles(verified)')
     .in('role', ['worker', 'employer'])
     .order('created_at', { ascending: false })
   if (error) throw error
@@ -13,6 +14,8 @@ export async function fetchUsers() {
   return (data || []).map((row) => ({
     id: row.id,
     name: row.full_name,
+    avatarPath: row.avatar_path || null,
+    avatar: avatarUrl(row.avatar_path),
     role: row.role,
     trade: row.worker_profiles?.trade || null,
     city: row.city,
@@ -44,7 +47,7 @@ export async function fetchModerationQueue() {
       .order('created_at', { ascending: false }),
     supabase
       .from('verification_requests')
-      .select('id, employer_id, document_path, created_at, profiles!verification_requests_employer_id_fkey(full_name, city)')
+      .select('id, employer_id, document_path, created_at, profiles!verification_requests_employer_id_fkey(full_name, city, role)')
       .eq('status', 'pending')
       .order('created_at', { ascending: false }),
   ])
@@ -67,7 +70,8 @@ export async function fetchModerationQueue() {
     by: r.profiles?.city || '',
     date: r.created_at ? r.created_at.slice(0, 10) : '',
     ref: r.id,
-    employerId: r.employer_id,
+    profileId: r.employer_id,
+    role: r.profiles?.role || 'employer',
     documentPath: r.document_path,
   }))
 
@@ -82,7 +86,8 @@ export async function resolveJob(jobId, decision) {
   if (error) throw error
 }
 
-export async function resolveVerification(requestId, employerId, decision) {
+/** Valide ou refuse une demande ; l'approbation pose le badge sur le profil du bon rôle. */
+export async function resolveVerification(requestId, profileId, role, decision) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -98,11 +103,9 @@ export async function resolveVerification(requestId, employerId, decision) {
   if (error) throw error
 
   if (decision === 'approve') {
-    const { error: empErr } = await supabase
-      .from('employer_profiles')
-      .update({ verified: true })
-      .eq('profile_id', employerId)
-    if (empErr) throw empErr
+    const table = role === 'worker' ? 'worker_profiles' : 'employer_profiles'
+    const { error: profErr } = await supabase.from(table).update({ verified: true }).eq('profile_id', profileId)
+    if (profErr) throw profErr
   }
 }
 

@@ -6,8 +6,8 @@ const control =
 export function Label({ children, hint }) {
   return (
     <span className="mb-1.5 flex items-baseline justify-between gap-3">
-      <span className="text-[13px] font-medium text-ink-800">{children}</span>
-      {hint && <span className="text-[11px] text-ink-400">{hint}</span>}
+      <span className="text-[14px] font-medium text-ink-800">{children}</span>
+      {hint && <span className="text-[12px] text-ink-400">{hint}</span>}
     </span>
   )
 }
@@ -61,7 +61,7 @@ export function Checkbox({ label, className = '', ...rest }) {
         className="h-4 w-4 rounded-md border-sand-400 text-vert-700 focus:ring-vert-700/40"
         {...rest}
       />
-      <span className="text-[13px] text-ink-600">{label}</span>
+      <span className="text-[14px] text-ink-600">{label}</span>
     </label>
   )
 }

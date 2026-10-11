@@ -17,6 +17,8 @@ import Button from '../components/ui/Button'
 import WorkerCard from '../components/WorkerCard'
 import ReportButton from '../components/ReportButton'
 import Reveal from '../components/ui/Reveal'
+import ReviewList from '../components/reviews/ReviewList'
+import { useDocumentMeta } from '../lib/useDocumentMeta'
 
 const LANG_LABEL = {
   ar: 'العربية',
@@ -33,6 +35,8 @@ export default function WorkerDetail() {
 
   const [w, setW] = useState(null)
   const [similar, setSimilar] = useState([])
+
+  useDocumentMeta(w && `${w.name} — ${tradeLabel(w.trade)}`, w?.bio)
   const [loading, setLoading] = useState(true)
   const [applications, setApplications] = useState([])
   const [cvError, setCvError] = useState('')
@@ -96,7 +100,7 @@ export default function WorkerDetail() {
         <div className="shell py-5">
           <Link
             to="/travailleurs"
-            className="inline-flex items-center gap-2 text-[13px] text-ink-600 transition-colors hover:text-vert-700"
+            className="inline-flex items-center gap-2 text-[14px] text-ink-600 transition-colors hover:text-vert-700"
           >
             <ArrowLeft className="flip-rtl h-4 w-4" />
             {t('nav.workers')}
@@ -108,7 +112,7 @@ export default function WorkerDetail() {
       <section className="border-b border-sand-200 bg-white">
         <div className="shell py-12 md:py-16">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-            <Avatar name={w.name} size="xl" className="animate-fade" />
+            <Avatar name={w.name} src={w.avatar} size="xl" className="animate-fade" />
             <div className="flex-1 animate-rise">
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-[clamp(1.8rem,4vw,2.7rem)] leading-tight">{w.name}</h1>
@@ -120,7 +124,7 @@ export default function WorkerDetail() {
                 )}
               </div>
               <p className="mt-2 font-display text-[19px] text-ocre-700">{tradeLabel(w.trade)}</p>
-              <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13.5px] text-ink-400">
+              <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[14.5px] text-ink-400">
                 <span className="flex items-center gap-1.5">
                   <MapPin className="h-4 w-4" />
                   {w.city && t(`cities.${w.city}`)}{w.district ? ` · ${w.district}` : ''}
@@ -149,7 +153,7 @@ export default function WorkerDetail() {
               <h2 className="text-[22px]">{t('common.skills')}</h2>
               <div className="mt-5 flex flex-wrap gap-2">
                 {w.skills.map((s) => (
-                  <Badge key={s} tone="vert" className="px-3 py-1.5 text-[12.5px]">{s}</Badge>
+                  <Badge key={s} tone="vert" className="px-3 py-1.5 text-[13.5px]">{s}</Badge>
                 ))}
               </div>
             </section>
@@ -160,7 +164,7 @@ export default function WorkerDetail() {
               <h2 className="text-[22px]">{t('common.languages')}</h2>
               <ul className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
                 {w.langs.map((l) => (
-                  <li key={l} className="flex items-center gap-2 text-[14.5px] text-ink-600">
+                  <li key={l} className="flex items-center gap-2 text-[15.5px] text-ink-600">
                     <Languages className="h-4 w-4 text-vert-600" />
                     {LANG_LABEL[l] || l}
                   </li>
@@ -168,24 +172,26 @@ export default function WorkerDetail() {
               </ul>
             </section>
           )}
+
+          <ReviewList profileId={w.id} className="mt-10" />
         </article>
 
         <aside className="lg:col-span-5 xl:col-span-4">
           <div className="sticky top-28 rounded-2xl border border-sand-200/70 bg-white p-6 shadow-card">
             <div className="flex items-baseline justify-between border-b border-sand-200/70 pb-5">
               <div>
-                <p className="text-[11.5px] uppercase tracking-[0.12em] text-ink-400">
+                <p className="text-[12.5px] uppercase tracking-[0.12em] text-ink-400">
                   {t('common.rate')}
                 </p>
                 <p className="mt-1.5 font-display text-[26px] leading-none text-vert-700">
                   {n(w.rate || 0)}{' '}
-                  <span className="text-[13px] text-ink-400">MRU {w.unit ? t(`common.${w.unit}`) : ''}</span>
+                  <span className="text-[14px] text-ink-400">MRU {w.unit ? t(`common.${w.unit}`) : ''}</span>
                 </p>
               </div>
               <Wallet className="h-5 w-5 text-sand-400" />
             </div>
 
-            <p className="mt-5 flex items-center gap-2 text-[13px] text-ink-600">
+            <p className="mt-5 flex items-center gap-2 text-[14px] text-ink-600">
               <span
                 className={`h-2 w-2 rounded-full ${
                   w.availability === 'now'
@@ -210,18 +216,18 @@ export default function WorkerDetail() {
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <Link
                           to={`/offres/${a.jobId}`}
-                          className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-ink transition-colors hover:text-vert-700"
+                          className="min-w-0 flex-1 truncate text-[14.5px] font-medium text-ink transition-colors hover:text-vert-700"
                         >
                           {a.jobTitle}
                         </Link>
                         <StatusPill status={a.status}>{t(`appStatus.${a.status}`)}</StatusPill>
                       </div>
-                      <p className="mt-1 text-[11.5px] text-ink-400">{d(a.date)}</p>
+                      <p className="mt-1 text-[12.5px] text-ink-400">{d(a.date)}</p>
 
                       {a.cvPath && (
                         <button
                           onClick={() => openCv(a.cvPath)}
-                          className="mt-3 inline-flex items-center gap-2 rounded-lg border border-sand-300 bg-white px-3 py-1.5 text-[12.5px] text-ink-600 transition-colors hover:border-vert-200 hover:text-vert-700"
+                          className="mt-3 inline-flex items-center gap-2 rounded-lg border border-sand-300 bg-white px-3 py-1.5 text-[13.5px] text-ink-600 transition-colors hover:border-vert-200 hover:text-vert-700"
                         >
                           <FileText className="h-3.5 w-3.5" />
                           {t('cv.view')}
@@ -229,7 +235,7 @@ export default function WorkerDetail() {
                       )}
 
                       {a.message && (
-                        <p className="mt-3 flex gap-2 border-s-2 border-sand-300 ps-3 text-[12.5px] leading-relaxed text-ink-600">
+                        <p className="mt-3 flex gap-2 border-s-2 border-sand-300 ps-3 text-[13.5px] leading-relaxed text-ink-600">
                           <Quote className="mt-0.5 h-3 w-3 shrink-0 text-sand-400" />
                           {a.message}
                         </p>
@@ -238,7 +244,7 @@ export default function WorkerDetail() {
                   ))}
                 </ul>
 
-                {cvError && <p className="mt-3 text-[12.5px] text-red-600">{cvError}</p>}
+                {cvError && <p className="mt-3 text-[13.5px] text-red-600">{cvError}</p>}
 
                 <Button
                   to="/tableau-de-bord/employeur/candidatures"
@@ -255,7 +261,7 @@ export default function WorkerDetail() {
                 {/* Le formulaire d'origine n'envoyait rien (`preventDefault` seul).
                     Tant qu'il n'y a pas de messagerie, la mise en relation passe
                     par une annonce : on l'indique au lieu de la simuler. */}
-                <p className="mt-2 text-[13px] leading-relaxed text-ink-600">{t('workers.contactLede')}</p>
+                <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{t('workers.contactLede')}</p>
 
                 {isEmployer ? (
                   <Button to="/tableau-de-bord/employeur/annonces" size="lg" className="mt-5 w-full">
@@ -267,7 +273,7 @@ export default function WorkerDetail() {
                   </Button>
                 )}
 
-                <p className="mt-4 flex items-center justify-center gap-2 text-[12.5px] text-ink-400">
+                <p className="mt-4 flex items-center justify-center gap-2 text-[13.5px] text-ink-400">
                   <Phone className="h-3.5 w-3.5" />
                   {t('common.phoneHidden')}
                 </p>

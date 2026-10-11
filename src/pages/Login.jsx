@@ -53,15 +53,19 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-5 py-16">
+    <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden px-5 py-16">
+      <div
+        className="motif pointer-events-none absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]"
+        aria-hidden="true"
+      />
       <div className="w-full max-w-sm animate-rise">
         <div className="mb-8 flex justify-center">
           <Wordmark imgClass="h-24 w-auto" />
         </div>
 
-        <div className="border border-sand-200 bg-white p-8">
-          <h1 className="text-[26px] leading-tight">{t('auth.loginTitle')}</h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{t('auth.loginLede')}</p>
+        <div className="rounded-3xl border border-sand-200 bg-white p-8 shadow-card sm:p-9">
+          <h1 className="text-[28px] font-semibold leading-tight">{t('auth.loginTitle')}</h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t('auth.loginLede')}</p>
 
           <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
             <Input
@@ -85,12 +89,12 @@ export default function Login() {
 
             <div className="flex items-center justify-between pt-1">
               <Checkbox label={t('auth.remember')} />
-              <button type="button" className="text-[12.5px] text-vert-700 hover:underline">
+              <Link to="/mot-de-passe-oublie" className="text-[13.5px] text-vert-700 hover:underline">
                 {t('auth.forgot')}
-              </button>
+              </Link>
             </div>
 
-            {error && <p className="text-[13px] text-red-600">{error}</p>}
+            {error && <p className="text-[14px] text-red-600">{error}</p>}
 
             <Button type="submit" size="lg" className="mt-2 w-full" disabled={submitting}>
               {submitting ? '…' : t('auth.submitLogin')}
@@ -98,7 +102,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-[13.5px] text-ink-600">
+        <p className="mt-6 text-center text-[14.5px] text-ink-600">
           {t('auth.noAccount')}{' '}
           <Link to="/inscription" className="font-medium text-vert-700 hover:underline">
             {t('nav.register')}

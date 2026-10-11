@@ -7,7 +7,7 @@ const base =
 const variants = {
   // Vert plein : action principale
   primary:
-    'bg-vert-700 text-sand-50 shadow-sm hover:bg-vert-800 active:translate-y-px',
+    'bg-vert-700 text-sand-50 shadow-sm hover:bg-vert-800 hover:shadow-lift active:translate-y-px',
   // Contour encre : action secondaire
   outline:
     'border border-sand-300 bg-white text-ink shadow-sm hover:border-vert-200 hover:bg-vert-50/40 hover:text-vert-700 active:translate-y-px',
@@ -22,7 +22,7 @@ const variants = {
 }
 
 const sizes = {
-  sm: 'h-9 px-4 text-[13px] rounded-xl',
+  sm: 'h-9 px-4 text-[14px] rounded-xl',
   md: 'h-11 px-5 text-sm rounded-xl',
   lg: 'h-[52px] px-7 text-[15px] rounded-xl',
 }

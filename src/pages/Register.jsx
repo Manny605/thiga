@@ -70,15 +70,19 @@ export default function Register() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-5 py-16">
+    <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden px-5 py-16">
+      <div
+        className="motif pointer-events-none absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]"
+        aria-hidden="true"
+      />
       <div className="w-full max-w-md animate-rise">
         <div className="mb-8 flex justify-center">
           <Wordmark imgClass="h-24 w-auto" />
         </div>
 
-        <div className="border border-sand-200 bg-white p-8">
-          <h1 className="text-[26px] leading-tight">{t('auth.registerTitle')}</h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{t('auth.registerLede')}</p>
+        <div className="rounded-3xl border border-sand-200 bg-white p-8 shadow-card sm:p-9">
+          <h1 className="text-[28px] font-semibold leading-tight">{t('auth.registerTitle')}</h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t('auth.registerLede')}</p>
 
           {/* Sélecteur de rôle — deux boutons compacts */}
           <div className="mt-6 grid grid-cols-2 gap-3">
@@ -90,21 +94,21 @@ export default function Register() {
                   type="button"
                   onClick={() => setRole(r.id)}
                   aria-pressed={active}
-                  className={`flex items-center gap-2.5 border p-3 text-start transition-colors ${
+                  className={`flex items-center gap-2.5 rounded-xl border p-3 text-start transition-colors ${
                     active
                       ? 'border-vert-600 bg-vert-50 text-vert-700'
                       : 'border-sand-300 bg-white text-ink-600 hover:border-sand-400'
                   }`}
                 >
                   <r.icon className="h-5 w-5 shrink-0" strokeWidth={1.5} />
-                  <span className="text-[13.5px] font-medium">{t(r.title)}</span>
+                  <span className="text-[14.5px] font-medium">{t(r.title)}</span>
                 </button>
               )
             })}
           </div>
 
           {info ? (
-            <p className="mt-6 border-t border-sand-200/70 pt-5 text-[14px] leading-relaxed text-vert-700">
+            <p className="mt-6 border-t border-sand-200/70 pt-5 text-[15px] leading-relaxed text-vert-700">
               {info}
             </p>
           ) : (
@@ -167,7 +171,7 @@ export default function Register() {
                 required
               />
 
-              {error && <p className="text-[13px] text-red-600">{error}</p>}
+              {error && <p className="text-[14px] text-red-600">{error}</p>}
 
               <Button type="submit" size="lg" className="mt-2 w-full" disabled={submitting}>
                 {submitting ? '…' : t('auth.submitRegister')}
@@ -175,10 +179,15 @@ export default function Register() {
             </form>
           )}
 
-          <p className="mt-4 text-center text-[12px] leading-relaxed text-ink-400">{t('auth.terms')}</p>
+          <p className="mt-4 text-center text-[13px] leading-relaxed text-ink-400">
+            {t('auth.terms')}{' '}
+            <Link to="/conditions" className="text-vert-700 hover:underline">{t('footer.terms')}</Link>
+            {' · '}
+            <Link to="/confidentialite" className="text-vert-700 hover:underline">{t('footer.privacy')}</Link>
+          </p>
         </div>
 
-        <p className="mt-6 text-center text-[13.5px] text-ink-600">
+        <p className="mt-6 text-center text-[14.5px] text-ink-600">
           {t('auth.hasAccount')}{' '}
           <Link to="/connexion" className="font-medium text-vert-700 hover:underline">
             {t('nav.login')}

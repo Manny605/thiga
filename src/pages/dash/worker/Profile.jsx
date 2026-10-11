@@ -5,6 +5,7 @@ import { useAuth } from '../../../auth/AuthProvider'
 import { updateMyWorkerProfile } from '../../../lib/workerDash'
 import { CV_ACCEPT, describeCvProblem, detachCv, getCvUrl, uploadCv } from '../../../lib/cv'
 import Panel from '../../../components/dashboard/Panel'
+import VerificationPanel from '../../../components/dashboard/VerificationPanel'
 import Button from '../../../components/ui/Button'
 import { Input, Select, Textarea } from '../../../components/ui/Field'
 import { useWorkerDash } from './WorkerLayout'
@@ -68,7 +69,7 @@ function CvPanel({ workerId, profile, onChanged }) {
 
   return (
     <Panel title={t('cv.title')} className="mb-6">
-      <p className="text-[13.5px] leading-relaxed text-ink-600">{t('cv.lede')}</p>
+      <p className="text-[14.5px] leading-relaxed text-ink-600">{t('cv.lede')}</p>
 
       {profile.cvPath ? (
         <div className="mt-5 flex flex-wrap items-center gap-3 rounded-xl border border-sand-200 bg-sand-50/60 p-4">
@@ -76,14 +77,14 @@ function CvPanel({ workerId, profile, onChanged }) {
             <FileText className="h-4 w-4" strokeWidth={1.5} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13.5px] font-medium text-ink">{profile.cvName || t('cv.fileFallback')}</p>
+            <p className="truncate text-[14.5px] font-medium text-ink">{profile.cvName || t('cv.fileFallback')}</p>
             {profile.cvUploadedAt && (
-              <p className="mt-0.5 text-[11.5px] text-ink-400">{t('cv.uploadedOn')} {d(profile.cvUploadedAt)}</p>
+              <p className="mt-0.5 text-[12.5px] text-ink-400">{t('cv.uploadedOn')} {d(profile.cvUploadedAt)}</p>
             )}
           </div>
           <button
             onClick={handleView}
-            className="h-9 rounded-lg border border-sand-300 bg-white px-3 text-[12.5px] text-ink-600 transition-colors hover:border-vert-200 hover:text-vert-700"
+            className="h-9 rounded-lg border border-sand-300 bg-white px-3 text-[13.5px] text-ink-600 transition-colors hover:border-vert-200 hover:text-vert-700"
           >
             {t('cv.view')}
           </button>
@@ -97,19 +98,19 @@ function CvPanel({ workerId, profile, onChanged }) {
           </button>
         </div>
       ) : (
-        <p className="mt-4 text-[13px] text-ink-400">{t('cv.none')}</p>
+        <p className="mt-4 text-[14px] text-ink-400">{t('cv.none')}</p>
       )}
 
-      <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-sand-300 bg-white px-4 py-2.5 text-[13px] font-medium text-ink shadow-sm transition-colors hover:border-vert-200 hover:text-vert-700">
+      <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-sand-300 bg-white px-4 py-2.5 text-[14px] font-medium text-ink shadow-sm transition-colors hover:border-vert-200 hover:text-vert-700">
         <Upload className="h-4 w-4" strokeWidth={1.75} />
         {busy ? t('cv.uploading') : profile.cvPath ? t('cv.replace') : t('cv.upload')}
         <input type="file" accept={CV_ACCEPT} onChange={handleFile} disabled={busy} className="hidden" />
       </label>
 
-      <p className="mt-2 text-[11.5px] text-ink-400">{t('cv.constraints')}</p>
+      <p className="mt-2 text-[12.5px] text-ink-400">{t('cv.constraints')}</p>
 
-      {message && <p className="mt-3 text-[13px] text-vert-700">{message}</p>}
-      {error && <p className="mt-3 text-[13px] text-red-600">{error}</p>}
+      {message && <p className="mt-3 text-[14px] text-vert-700">{message}</p>}
+      {error && <p className="mt-3 text-[14px] text-red-600">{error}</p>}
     </Panel>
   )
 }
@@ -172,6 +173,12 @@ export default function Profile() {
 
   return (
     <>
+      {/* Un profil non vérifié n'apparaît pas dans l'annuaire : la demande
+          se fait ici, comme pour les employeurs. */}
+      {user && !workerProfile.verified && (
+        <VerificationPanel profileId={user.id} ledeKey="verification.ledeWorker" />
+      )}
+
       {user && <CvPanel workerId={user.id} profile={workerProfile} onChanged={reload} />}
 
       <Panel title={t('dash.myProfile')}>
@@ -211,8 +218,8 @@ export default function Profile() {
 
           <Input label={t('dash.districtLabel')} value={district} onChange={(e) => setDistrict(e.target.value)} />
 
-          {message && <p className="text-[13px] text-vert-700">{message}</p>}
-          {error && <p className="text-[13px] text-red-600">{error}</p>}
+          {message && <p className="text-[14px] text-vert-700">{message}</p>}
+          {error && <p className="text-[14px] text-red-600">{error}</p>}
 
           <Button type="submit" size="sm" disabled={submitting}>
             {submitting ? '…' : t('dash.save')}
