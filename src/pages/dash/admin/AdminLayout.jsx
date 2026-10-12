@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom'
-import { Flag, LayoutGrid, ShieldAlert, Tags, Users2 } from 'lucide-react'
+import { ClipboardCheck, Flag, LayoutGrid, Settings, ShieldCheck, Tags, Users2 } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useAuth } from '../../../auth/AuthProvider'
 import {
-  fetchUsers, setUserStatus, setUserVerified,
+  fetchUsers, setUserStatus, setUserVerified, deleteUserAccount,
   fetchModerationQueue, resolveJob, resolveVerification,
   fetchReports, closeReport as closeReportRequest, deleteJob,
 } from '../../../lib/admin'
@@ -14,9 +14,11 @@ import { avatarUrl, removeAvatar } from '../../../lib/avatar'
 export const ADMIN_NAV = [
   { to: '/admin', end: true, icon: LayoutGrid, label: 'dash.overview', lede: 'admin.overviewLede' },
   { to: '/admin/utilisateurs', icon: Users2, label: 'dash.users', lede: 'admin.usersLede' },
-  { to: '/admin/moderation', icon: ShieldAlert, label: 'dash.moderation', lede: 'admin.moderationLede' },
+  { to: '/admin/annonces', icon: ClipboardCheck, label: 'dash.jobsReview', lede: 'admin.jobsReviewLede', queue: 'job' },
+  { to: '/admin/verifications', icon: ShieldCheck, label: 'dash.verifications', lede: 'admin.verificationsLede', queue: 'profile' },
   { to: '/admin/signalements', icon: Flag, label: 'dash.reports', lede: 'admin.reportsLede' },
   { to: '/admin/categories', icon: Tags, label: 'dash.categories', lede: 'admin.categoriesLede' },
+  { to: '/admin/parametres', icon: Settings, label: 'dash.settings', lede: 'admin.settingsLede' },
 ]
 
 /** Accès à l'état partagé de l'espace admin depuis n'importe quelle sous-page. */
@@ -59,13 +61,13 @@ export default function AdminLayout() {
       users,
       reload: load,
 
-      resolveQueue: async (id, decision) => {
+      resolveQueue: async (id, decision, detail) => {
         const item = queue.find((x) => x.id === id)
         if (!item) return
         if (item.kind === 'job') {
           await resolveJob(item.ref, decision)
         } else {
-          await resolveVerification(item.ref, item.profileId, item.role, decision)
+          await resolveVerification(item.ref, item.profileId, item.role, decision, detail)
         }
         setQueue((q) => q.filter((x) => x.id !== id))
         // Le statut d'une annonce ou d'un compte vient de changer : la liste
@@ -100,6 +102,14 @@ export default function AdminLayout() {
         const local = 'avatar' in patch ? { ...patch, avatarPath: null } : patch
         setUsers((list) => list.map((x) => (x.id === id ? { ...x, ...local } : x)))
       },
+
+      // Ses annonces, signalements et demandes disparaissent aussi : on recharge
+      // la modération et les signalements pour que les compteurs suivent.
+      removeUser: async (id) => {
+        await deleteUserAccount(id)
+        setUsers((list) => list.filter((x) => x.id !== id))
+        load()
+      },
     }),
     [queue, reports, users, load]
   )
@@ -107,8 +117,8 @@ export default function AdminLayout() {
   const nav = ADMIN_NAV.map((item) => ({
     ...item,
     count:
-      item.to === '/admin/moderation'
-        ? queue.length
+      item.queue
+        ? queue.filter((q) => q.kind === item.queue).length
         : item.to === '/admin/signalements'
         ? reports.length
         : 0,
@@ -124,7 +134,7 @@ export default function AdminLayout() {
       title: t(q.kind === 'job' ? 'notif.queueJob' : 'notif.queueProfile'),
       body: q.label,
       date: q.date,
-      to: '/admin/moderation',
+      to: q.kind === 'job' ? '/admin/annonces' : '/admin/verifications',
     })),
     ...reports.map((r) => ({
       id: `report:${r.id}`,

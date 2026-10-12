@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, LogOut, Menu, Languages, X } from 'lucide-react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { LogOut, Menu, Languages, X } from 'lucide-react'
 import { useI18n } from '../../i18n/I18nProvider'
 import { useAuth } from '../../auth/AuthProvider'
 import Avatar from '../ui/Avatar'
@@ -99,17 +99,6 @@ export default function DashShell({
       </nav>
 
       <div className="space-y-0.5 p-3">
-        {/* Retiré des espaces employeur et travailleur : l'accueil est fermé
-            aux connectés, le lien les renvoyait donc à leur propre portail. */}
-        {admin && (
-          <Link
-            to="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-600 transition-colors hover:bg-white hover:text-ink"
-          >
-            <ArrowLeft className="flip-rtl h-4 w-4" strokeWidth={1.75} />
-            {t('dash.backToSite')}
-          </Link>
-        )}
         <button
           onClick={toggle}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-ink-600 transition-colors hover:bg-white hover:text-ink"

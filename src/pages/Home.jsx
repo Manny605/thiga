@@ -1,77 +1,55 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, FileCheck2, Flag, MapPin } from 'lucide-react'
+import { ArrowRight, BadgeCheck, FileCheck2, Flag } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider'
 import { useTrades } from '../trades/TradesProvider'
 import { fetchPublicStats } from '../lib/stats'
 import { fetchFeaturedWorkers } from '../lib/workers'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
-import Avatar from '../components/ui/Avatar'
 import Reveal from '../components/ui/Reveal'
 import SectionHeading from '../components/ui/SectionHeading'
-import SearchBar from '../components/SearchBar'
 import TradeIcon from '../components/TradeIcon'
 import HomeOffers from '../components/HomeOffers'
+import WorkerCard from '../components/WorkerCard'
+import bannerSm from '../../assets/hero-banner-800.webp'
+import bannerLg from '../../assets/hero-banner-1400.webp'
 
 const TRUST_ICONS = [BadgeCheck, FileCheck2, Flag]
 
-/** Colonne visuelle du héros : profils réels en vedette sur un panneau vert à motif. */
-function HeroVisual({ workers, stats }) {
+/**
+ * Colonne visuelle du héros : l'illustration (bords déjà fondus dans l'image),
+ * et par-dessus les vrais compteurs de la plateforme, jamais des valeurs inventées.
+ */
+function HeroBanner({ stats }) {
   const { t, n } = useI18n()
-  const { tradeLabel } = useTrades()
 
   return (
-    <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-      <div className="relative overflow-hidden rounded-3xl bg-vert-700 p-6 shadow-lift sm:p-8">
-        <div className="motif-light pointer-events-none absolute inset-0 opacity-[0.09]" aria-hidden="true" />
-        <div
-          className="pointer-events-none absolute -end-24 -top-24 h-72 w-72 rounded-full bg-ocre-300/25 blur-3xl"
-          aria-hidden="true"
-        />
+    <div className="relative">
+      <img
+        src={bannerSm}
+        srcSet={`${bannerSm} 800w, ${bannerLg} 1400w`}
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        width="1400"
+        height="700"
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+        decoding="async"
+        className="pointer-events-none w-full animate-fade select-none lg:scale-110"
+      />
 
-        <p className="relative text-[12px] font-medium uppercase tracking-[0.16em] text-vert-100/80">
-          {t('home.featuredWorkers')}
-        </p>
-
-        <ul className="stagger relative mt-5 space-y-3">
-          {workers.map((w) => (
-            <li key={w.id}>
-              <Link
-                to={`/travailleurs/${w.id}`}
-                className="flex items-center gap-3.5 rounded-2xl bg-white/95 p-3.5 shadow-card transition-transform duration-300 hover:-translate-y-0.5"
-              >
-                <Avatar name={w.name} src={w.avatar} size="md" />
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 truncate text-[15px] font-medium text-ink">
-                    {w.name}
-                    {w.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-vert-600" />}
-                  </p>
-                  <p className="mt-0.5 flex items-center gap-1.5 truncate text-[13px] text-ink-400">
-                    <span className="text-ocre-700">{tradeLabel(w.trade)}</span>
-                    {w.city && (
-                      <>
-                        <MapPin className="h-3.5 w-3.5 shrink-0" />
-                        {t(`cities.${w.city}`)}
-                      </>
-                    )}
-                  </p>
-                </div>
-                <ArrowRight className="flip-rtl h-4 w-4 shrink-0 text-ink-400" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Pastilles de chiffres : uniquement des compteurs réels, jamais de valeur inventée. */}
       {stats && (
-        <div className="relative -mt-6 flex justify-center gap-3 px-4 sm:justify-start">
+        <div className="absolute -bottom-4 start-4 flex gap-3 sm:start-8">
           {[
             ['workers', stats.workers],
             ['verified', stats.verified],
-          ].map(([k, v]) => (
-            <div key={k} className="animate-rise rounded-2xl border border-sand-200 bg-white px-4 py-3 shadow-card">
+          ].map(([k, v], i) => (
+            <div
+              key={k}
+              className="animate-rise rounded-2xl border border-sand-200 bg-white/95 px-4 py-3 shadow-card backdrop-blur"
+              style={{ animationDelay: `${0.25 + i * 0.1}s` }}
+            >
               <p className="font-display text-[22px] font-semibold leading-none text-vert-700 tabular-nums">{n(v)}</p>
               <p className="mt-1.5 text-[12px] text-ink-400">{t(`home.stats.${k}`)}</p>
             </div>
@@ -97,19 +75,19 @@ export default function Home() {
 
   return (
     <>
-      {/* ── Héros : recherche immédiate + profils réels ───────── */}
+      {/* ── Héros : recherche immédiate + illustration ────────── */}
       <section className="relative overflow-hidden border-b border-sand-200 bg-white">
         <div
           className="motif pointer-events-none absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_65%)]"
           aria-hidden="true"
         />
-        <div className="shell relative grid items-center gap-14 py-14 md:py-20 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-7">
+        <div className="shell relative grid items-center gap-12 py-14 md:py-20 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-6">
             <div className="animate-fade">
               <Badge tone="ocre">{t('home.kicker')}</Badge>
             </div>
 
-            <h1 className="mt-6 animate-rise text-[clamp(2.5rem,6vw,4.4rem)] font-semibold leading-[1.02]">
+            <h1 className="mt-6 animate-rise text-[clamp(2.5rem,5.4vw,4.1rem)] font-semibold leading-[1.02]">
               {t('home.title')}
               <br />
               <em className="not-italic text-vert-700">{t('home.titleEm')}</em>
@@ -118,35 +96,22 @@ export default function Home() {
             <p className="mt-6 max-w-xl animate-rise text-[17px] leading-relaxed text-ink-600 [animation-delay:.1s]">
               {t('home.lede')}
             </p>
-
-            <div className="mt-9 animate-rise rounded-2xl border border-sand-200 bg-white p-3 shadow-card [animation-delay:.18s] sm:p-4">
-              <p className="mb-3 px-1 text-[13px] font-medium text-ink-600">{t('home.searchTitle')}</p>
-              <SearchBar target="/travailleurs" compact />
-            </div>
-
-            <div className="mt-5 flex animate-rise flex-wrap items-center gap-x-5 gap-y-2 text-[14px] [animation-delay:.24s]">
-              <Link to="/offres" className="inline-flex items-center gap-1.5 font-medium text-vert-700 hover:text-vert-800">
-                {t('home.ctaWorker')}
-                <ArrowRight className="flip-rtl h-4 w-4" />
-              </Link>
-              <span className="h-4 w-px bg-sand-300" aria-hidden="true" />
-              <Link to="/inscription" className="text-ink-600 hover:text-ink">
-                {t('nav.register')}
-              </Link>
-            </div>
           </div>
 
-          <div className="lg:col-span-5">
-            {workers.length > 0 && <HeroVisual workers={workers} stats={stats} />}
+          <div className="lg:col-span-6">
+            <HeroBanner stats={stats} />
           </div>
         </div>
       </section>
 
-      {/* ── 01 · Métiers ─────────────────────────────────────── */}
+      {/* ── 01 · Offres filtrables ───────────────────────────── */}
+      <HomeOffers />
+
+      {/* ── 02 · Métiers ─────────────────────────────────────── */}
       {visibleTrades.length > 0 && (
-        <section className="bg-sand-50">
+        <section className="bg-white">
           <div className="shell py-20 md:py-24">
-            <SectionHeading num="01" kicker={t('common.trade')} title={t('home.tradesTitle')} lede={t('home.tradesLede')} />
+            <SectionHeading num="02" kicker={t('common.trade')} title={t('home.tradesTitle')} lede={t('home.tradesLede')} />
             <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {visibleTrades.map((tr, i) => (
                 <Reveal key={tr.id} delay={(i % 5) * 60}>
@@ -169,13 +134,36 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── 02 · Offres filtrables ───────────────────────────── */}
-      <HomeOffers />
+      {/* ── 03 · Profils en vedette (vrais profils vérifiés) ─── */}
+      {workers.length > 0 && (
+        <section className="border-t border-sand-200 bg-sand-50">
+          <div className="shell py-20 md:py-24">
+            <SectionHeading
+              num="03"
+              kicker={t('nav.workers')}
+              title={t('home.featuredWorkers')}
+              action={
+                <Button to="/travailleurs" variant="outline" size="sm">
+                  {t('nav.workers')}
+                  <ArrowRight className="flip-rtl h-4 w-4" />
+                </Button>
+              }
+            />
+            <div className="mt-10 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {workers.map((w, i) => (
+                <Reveal key={w.id} delay={i * 80} className="h-full">
+                  <WorkerCard w={w} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/* ── 03 · Comment ça marche ───────────────────────────── */}
-      <section className="bg-white">
+      {/* ── 04 · Comment ça marche ───────────────────────────── */}
+      <section className="border-t border-sand-200 bg-white">
         <div className="shell py-20 md:py-24">
-          <SectionHeading num="03" kicker={t('home.kPath')} title={t('home.howTitle')} lede={t('home.howLede')} />
+          <SectionHeading num="04" kicker={t('home.kPath')} title={t('home.howTitle')} lede={t('home.howLede')} />
           <ol className="mt-12 grid gap-4 md:grid-cols-3">
             {t('home.steps').map((step, i) => (
               <Reveal as="li" key={step.t} delay={i * 90} className="relative rounded-2xl border border-sand-200 bg-sand-50 p-7">
@@ -190,10 +178,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 04 · Confiance ───────────────────────────────────── */}
+      {/* ── 05 · Confiance ───────────────────────────────────── */}
       <section className="border-t border-sand-200 bg-sand-50">
         <div className="shell py-20 md:py-24">
-          <SectionHeading num="04" kicker={t('home.kSafety')} title={t('home.trustTitle')} lede={t('home.trustLede')} />
+          <SectionHeading num="05" kicker={t('home.kSafety')} title={t('home.trustTitle')} lede={t('home.trustLede')} />
           <div className="mt-12 grid gap-4 md:grid-cols-3">
             {t('home.trust').map((item, i) => {
               const Icon = TRUST_ICONS[i]

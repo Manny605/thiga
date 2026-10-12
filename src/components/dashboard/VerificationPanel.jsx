@@ -65,6 +65,14 @@ export default function VerificationPanel({ profileId, ledeKey = 'verification.l
           </StatusPill>
         </div>
       )}
+      {verification?.status === 'rejected' && verification.reject_reason && (
+        <div className="mt-4 rounded-xl border border-ocre-300/70 bg-ocre-50 px-4 py-3 text-[14px] leading-relaxed text-ink-800">
+          <p>
+            <span className="font-medium">{t('verification.reasonLabel')}</span> {t(`verification.reasons.${verification.reject_reason}`)}
+          </p>
+          {verification.review_note && <p className="mt-1 text-ink-600">{verification.review_note}</p>}
+        </div>
+      )}
       {!verification && (
         <p className="mt-4 text-[14px] text-ink-400">{t('verification.none')}</p>
       )}

@@ -20,7 +20,7 @@ export const config = {
 const BOTS = /facebookexternalhit|facebot|whatsapp|telegrambot|twitterbot|slackbot|discordbot|linkedinbot|skypeuripreview|pinterest|vkshare|embedly|googlebot|bingbot|applebot/i
 
 const DEFAULT = {
-  title: 'THIGA — Trouvez le bon profil, près de chez vous',
+  title: 'THIGA · Trouvez le bon profil, près de chez vous',
   description:
     'THIGA met en relation employeurs et travailleurs de services en Mauritanie : ménage, garde d’enfants, conduite, cuisine, électricité, plomberie, jardinage, sécurité.',
 }
@@ -59,7 +59,7 @@ async function metaFor(pathname, origin) {
     if (!row) return null
     const pay = row.salary ? ` · ${row.salary.toLocaleString('fr-FR')} MRU${row.unit === 'perDay' ? '/jour' : '/mois'}` : ''
     return {
-      title: `${row.title} — ${cityName(row.city)}`,
+      title: `${row.title} · ${cityName(row.city)}`,
       description: clip(`${await tradeLabel(row.trade)}${pay} · ${row.profiles?.full_name || ''}. ${row.description || ''}`, 200),
       type: 'article',
     }
@@ -73,15 +73,15 @@ async function metaFor(pathname, origin) {
       ? `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/${row.profiles.avatar_path}`
       : null
     return {
-      title: `${row.profiles?.full_name || 'Profil'} — ${await tradeLabel(row.trade)}`,
+      title: `${row.profiles?.full_name || 'Profil'} · ${await tradeLabel(row.trade)}`,
       description: clip(`${cityName(row.profiles?.city)} · ${row.years || 0} ans d’expérience. ${row.bio || ''}`, 200),
       image: photo,
       type: 'profile',
     }
   }
 
-  if (pathname === '/offres') return { title: 'Offres d’emploi — THIGA', description: DEFAULT.description }
-  if (pathname === '/travailleurs') return { title: 'Travailleurs vérifiés — THIGA', description: DEFAULT.description }
+  if (pathname === '/offres') return { title: 'Offres d’emploi · THIGA', description: DEFAULT.description }
+  if (pathname === '/travailleurs') return { title: 'Travailleurs vérifiés · THIGA', description: DEFAULT.description }
   return null
 }
 

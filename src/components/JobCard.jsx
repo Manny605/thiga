@@ -11,7 +11,7 @@ export default function JobCard({ j }) {
   return (
     <Link
       to={`/offres/${j.id}`}
-      className="group relative block overflow-hidden rounded-2xl border border-sand-200/70 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-vert-200 hover:shadow-lift sm:p-6"
+      className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-sand-200/70 bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-vert-200 hover:shadow-lift sm:p-6"
     >
       <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-vert-600 transition-transform duration-500 group-hover:scale-x-100" />
 
@@ -39,7 +39,10 @@ export default function JobCard({ j }) {
 
       <p className="mt-3.5 line-clamp-2 text-[14.5px] leading-relaxed text-ink-600">{j.desc}</p>
 
-      <div className="mt-5 flex items-center justify-between border-t border-sand-200/70 pt-4">
+      {/* Pousse le pied de carte en bas : toutes les cartes d'une grille ont la même hauteur. */}
+      <div className="min-h-5 flex-1" aria-hidden="true" />
+
+      <div className="flex items-center justify-between border-t border-sand-200/70 pt-4">
         <div>
           <p className="font-display text-[19px] leading-none text-vert-700">
             {n(j.salary)}{' '}

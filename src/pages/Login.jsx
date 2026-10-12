@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { dashPathFor } from '../auth/roles'
 import { fetchProfile } from '../lib/profile'
 import { Wordmark } from '../components/layout/Header'
-import { Checkbox, Input } from '../components/ui/Field'
+import { Checkbox, Input, PasswordInput } from '../components/ui/Field'
 import Button from '../components/ui/Button'
 
 export default function Login() {
@@ -77,9 +77,10 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
+            <PasswordInput
               label={t('auth.password')}
-              type="password"
+              showLabel={t('auth.showPassword')}
+              hideLabel={t('auth.hidePassword')}
               placeholder="••••••••"
               autoComplete="current-password"
               value={password}

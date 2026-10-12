@@ -5,6 +5,7 @@ import { fetchMySettings, updateMySettings } from '../../../lib/workerDash'
 import { CITIES } from '../../../data/mock'
 import Panel from '../../../components/dashboard/Panel'
 import AvatarPanel from '../../../components/dashboard/AvatarPanel'
+import PasswordPanel from '../../../components/dashboard/PasswordPanel'
 import Button from '../../../components/ui/Button'
 import { Input, Select } from '../../../components/ui/Field'
 
@@ -72,6 +73,8 @@ export default function Settings() {
           </Button>
         </form>
       </Panel>
+
+      <PasswordPanel />
     </>
   )
 }

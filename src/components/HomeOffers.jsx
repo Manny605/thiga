@@ -64,7 +64,7 @@ export default function HomeOffers() {
     <section className="border-y border-sand-200/70 bg-sand-100/40">
       <div className="shell py-20 md:py-28">
         <SectionHeading
-          num="02"
+          num="01"
           kicker={t('nav.jobs')}
           title={t('home.featuredJobs')}
           action={
@@ -115,12 +115,12 @@ export default function HomeOffers() {
         </div>
 
         {/* Résultats */}
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid auto-rows-fr gap-5 lg:grid-cols-2">
           {shown.length === 0 ? (
             <EmptyState onReset={reset} />
           ) : (
             shown.map((j, i) => (
-              <Reveal key={j.id} delay={Math.min(i, 6) * 60}>
+              <Reveal key={j.id} delay={Math.min(i, 6) * 60} className="h-full">
                 <JobCard j={j} />
               </Reveal>
             ))
