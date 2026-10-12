@@ -7,7 +7,7 @@ import AccountNotice from './AccountNotice'
 /** Protège une route : connexion requise, rôle exact, compte non suspendu. */
 export default function RequireRole({ role, children }) {
   const { t } = useI18n()
-  const { ready, isAuthenticated, profile } = useAuth()
+  const { ready, isAuthenticated, profile, mustChangePassword } = useAuth()
   const location = useLocation()
 
   if (!ready) {
@@ -26,6 +26,10 @@ export default function RequireRole({ role, children }) {
 
   if (profile.status === 'suspended') {
     return <AccountNotice title={t('auth.suspendedTitle')} lede={t('auth.suspendedLede')} />
+  }
+
+  if (mustChangePassword) {
+    return <Navigate to="/nouveau-mot-de-passe" replace />
   }
 
   if (profile.role !== role) {

@@ -84,6 +84,8 @@ export function AuthProvider({ children }) {
       ready: !loading && !profileLoading,
       isAuthenticated: !!session,
       isSuspended: profile?.status === 'suspended',
+      /** Mot de passe temporaire défini par l'admin : à remplacer avant d'entrer dans son espace. */
+      mustChangePassword: !!session?.user?.user_metadata?.must_change_password,
       refreshProfile,
       signUp,
       signIn,

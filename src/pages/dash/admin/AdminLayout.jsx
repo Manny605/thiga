@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom'
-import { ClipboardCheck, Flag, LayoutGrid, Settings, ShieldCheck, Tags, Users2 } from 'lucide-react'
+import { ClipboardCheck, Flag, KeyRound, LayoutGrid, Settings, ShieldCheck, Tags, Users2 } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useAuth } from '../../../auth/AuthProvider'
 import {
   fetchUsers, setUserStatus, setUserVerified, deleteUserAccount,
   fetchModerationQueue, resolveJob, resolveVerification,
-  fetchReports, closeReport as closeReportRequest, deleteJob,
+  fetchReports, closeReports as closeReportsRequest, fetchResetRequests,
 } from '../../../lib/admin'
 import DashShell from '../../../components/dashboard/DashShell'
 import { avatarUrl, removeAvatar } from '../../../lib/avatar'
@@ -17,6 +17,7 @@ export const ADMIN_NAV = [
   { to: '/admin/annonces', icon: ClipboardCheck, label: 'dash.jobsReview', lede: 'admin.jobsReviewLede', queue: 'job' },
   { to: '/admin/verifications', icon: ShieldCheck, label: 'dash.verifications', lede: 'admin.verificationsLede', queue: 'profile' },
   { to: '/admin/signalements', icon: Flag, label: 'dash.reports', lede: 'admin.reportsLede' },
+  { to: '/admin/acces', icon: KeyRound, label: 'dash.access', lede: 'admin.accessModuleLede' },
   { to: '/admin/categories', icon: Tags, label: 'dash.categories', lede: 'admin.categoriesLede' },
   { to: '/admin/parametres', icon: Settings, label: 'dash.settings', lede: 'admin.settingsLede' },
 ]
@@ -34,14 +35,16 @@ export default function AdminLayout() {
   const [queue, setQueue] = useState([])
   const [reports, setReports] = useState([])
   const [users, setUsers] = useState([])
+  const [resetRequests, setResetRequests] = useState([])
   const [loadError, setLoadError] = useState('')
 
   const load = useCallback(async () => {
     try {
-      const [q, r, u] = await Promise.all([fetchModerationQueue(), fetchReports(), fetchUsers()])
+      const [q, r, u, a] = await Promise.all([fetchModerationQueue(), fetchReports(), fetchUsers(), fetchResetRequests()])
       setQueue(q)
       setReports(r)
       setUsers(u)
+      setResetRequests(a)
       setLoadError('')
     } catch {
       setLoadError(t('dash.loadError'))
@@ -59,7 +62,11 @@ export default function AdminLayout() {
       queue,
       reports,
       users,
+      resetRequests,
       reload: load,
+
+      /** Demande d'accès traitée : elle quitte la file (l'historique la garde). */
+      dropResetRequest: (id) => setResetRequests((list) => list.filter((x) => x.id !== id)),
 
       resolveQueue: async (id, decision, detail) => {
         const item = queue.find((x) => x.id === id)
@@ -75,22 +82,20 @@ export default function AdminLayout() {
         load()
       },
 
-      closeReport: async (id) => {
-        await closeReportRequest(id)
-        setReports((r) => r.filter((x) => x.id !== id))
-      },
-
-      /** Supprime l'annonce signalée ; le signalement part en cascade avec elle. */
-      deleteReportedJob: async (reportId, jobId) => {
-        await deleteJob(jobId)
-        setReports((r) => r.filter((x) => x.id !== reportId))
-      },
-
-      suspendReportedWorker: async (reportId, workerId) => {
-        await setUserStatus(workerId, 'suspended')
-        await closeReportRequest(reportId)
-        setReports((r) => r.filter((x) => x.id !== reportId))
-        setUsers((list) => list.map((x) => (x.id === workerId ? { ...x, status: 'suspended' } : x)))
+      /**
+       * Décision sur une cible signalée, appliquée à tous ses signalements ouverts :
+       * classer sans suite, retirer l'annonce (hors ligne, pas supprimée, pour
+       * garder la trace) ou suspendre le compte.
+       */
+      resolveReports: async (ids, action, { jobId, workerId, note } = {}) => {
+        if (action === 'retire') await resolveJob(jobId, 'reject')
+        if (action === 'suspend') await setUserStatus(workerId, 'suspended')
+        const resolution = { retire: 'content_removed', suspend: 'account_suspended' }[action] || 'dismissed'
+        await closeReportsRequest(ids, { resolution, note })
+        setReports((r) => r.filter((x) => !ids.includes(x.id)))
+        if (action === 'suspend') {
+          setUsers((list) => list.map((x) => (x.id === workerId ? { ...x, status: 'suspended' } : x)))
+        }
       },
 
       patchUser: async (id, patch) => {
@@ -111,7 +116,7 @@ export default function AdminLayout() {
         load()
       },
     }),
-    [queue, reports, users, load]
+    [queue, reports, users, resetRequests, load]
   )
 
   const nav = ADMIN_NAV.map((item) => ({
@@ -121,6 +126,8 @@ export default function AdminLayout() {
         ? queue.filter((q) => q.kind === item.queue).length
         : item.to === '/admin/signalements'
         ? reports.length
+        : item.to === '/admin/acces'
+        ? resetRequests.length
         : 0,
   }))
 
@@ -135,6 +142,13 @@ export default function AdminLayout() {
       body: q.label,
       date: q.date,
       to: q.kind === 'job' ? '/admin/annonces' : '/admin/verifications',
+    })),
+    ...resetRequests.map((r) => ({
+      id: `reset:${r.id}`,
+      title: t('notif.resetRequest'),
+      body: r.name || r.phone,
+      date: r.date,
+      to: '/admin/acces',
     })),
     ...reports.map((r) => ({
       id: `report:${r.id}`,

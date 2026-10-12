@@ -17,7 +17,7 @@ const MIN_LENGTH = 8
  */
 export default function ResetPassword() {
   const { t } = useI18n()
-  const { ready, session, profile } = useAuth()
+  const { ready, session, profile, mustChangePassword } = useAuth()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [state, setState] = useState('idle') // idle | saving | done
@@ -30,7 +30,10 @@ export default function ResetPassword() {
     if (password !== confirm) return setError(t('auth.resetMismatch'))
 
     setState('saving')
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } = await supabase.auth.updateUser({
+      password,
+      ...(mustChangePassword ? { data: { must_change_password: false } } : {}),
+    })
     if (updateError) {
       setState('idle')
       setError(updateError.code === 'same_password' ? t('auth.resetSame') : t('auth.errorGeneric'))
@@ -63,7 +66,7 @@ export default function ResetPassword() {
   } else {
     body = (
       <>
-        <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t('auth.resetLede')}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t(mustChangePassword ? 'auth.mustChangeLede' : 'auth.resetLede')}</p>
         <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
           <PasswordInput
             id="reset-password"

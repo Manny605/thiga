@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, BadgeCheck, CalendarDays, FileText, Mail, MapPin, ShieldQuestion, UserRoundSearch } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, CalendarDays, Check, Copy, FileText, KeyRound, Mail, MapPin, ShieldQuestion, UserRoundSearch } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useTrades } from '../../../trades/TradesProvider'
-import { fetchUserDetail, getVerificationDocumentUrl } from '../../../lib/admin'
+import { fetchUserDetail, getVerificationDocumentUrl, setTemporaryPassword } from '../../../lib/admin'
 import { getCvUrl } from '../../../lib/cv'
 import Panel from '../../../components/dashboard/Panel'
 import StatusPill from '../../../components/dashboard/StatusPill'
@@ -24,6 +24,89 @@ function Row({ label, children }) {
       <dt className="text-[13.5px] text-ink-400">{label}</dt>
       <dd className="text-end text-[14.5px] font-medium text-ink">{children}</dd>
     </div>
+  )
+}
+
+/**
+ * Dépannage de l'accès, sans e-mail : un mot de passe temporaire à transmettre
+ * au numéro enregistré du compte. Il n'est montré qu'une fois ; le compte devra
+ * le remplacer à sa prochaine connexion.
+ */
+function AccessPanel({ u }) {
+  const { t } = useI18n()
+  const [state, setState] = useState('idle') // idle | confirming | generating
+  const [temp, setTemp] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [error, setError] = useState('')
+
+  const generate = async () => {
+    setError('')
+    setState('generating')
+    try {
+      setTemp(await setTemporaryPassword(u.id))
+      setState('idle')
+    } catch (e) {
+      setState('idle')
+      setError(`${t('admin.tempPasswordError')} ${e.message || ''}`.trim())
+    }
+  }
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(temp)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Presse-papiers indisponible : le mot de passe reste sélectionnable à l'écran.
+    }
+  }
+
+  const btn = 'inline-flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-[13.5px] font-medium transition-colors disabled:opacity-50'
+
+  return (
+    <Panel title={t('admin.access')}>
+      <p className="text-[14px] leading-relaxed text-ink-600">{t('admin.accessLede')}</p>
+
+      <div className="mt-4 grid gap-2">
+        {!temp && state !== 'confirming' && (
+          <button onClick={() => setState('confirming')} disabled={state === 'generating'} className={`${btn} border-sand-300 bg-white text-ink-600 hover:border-ocre-500 hover:text-ocre-700`}>
+            <KeyRound className="h-3.5 w-3.5" />
+            {state === 'generating' ? '…' : t('admin.tempPassword')}
+          </button>
+        )}
+      </div>
+
+      {state === 'confirming' && (
+        <div className="mt-3 rounded-xl border border-ocre-300/70 bg-ocre-50 p-4">
+          <p className="text-[13.5px] leading-relaxed text-ink-800">{t('admin.tempPasswordConfirm')}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={generate} className="h-9 rounded-lg bg-ocre-700 px-3.5 text-[13.5px] font-medium text-white transition-colors hover:bg-ocre-500">
+              {t('admin.tempPasswordGo')}
+            </button>
+            <button onClick={() => setState('idle')} className="h-9 rounded-lg border border-sand-300 bg-white px-3.5 text-[13.5px] text-ink-600 transition-colors hover:text-ink">
+              {t('dash.cancel')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {temp && (
+        <div className="mt-3 rounded-xl border border-vert-100 bg-vert-50/70 p-4">
+          <p className="text-[13px] text-ink-600">{t('admin.tempPasswordShown')}</p>
+          <div className="mt-2 flex items-center gap-2">
+            <code dir="ltr" className="flex-1 select-all rounded-lg bg-white px-3 py-2 text-[17px] font-semibold tracking-wider text-ink ring-1 ring-sand-200">
+              {temp}
+            </code>
+            <button onClick={copy} title={t('admin.copy')} className="grid h-10 w-10 place-items-center rounded-lg border border-sand-300 bg-white text-ink-600 transition-colors hover:text-vert-700">
+              {copied ? <Check className="h-4 w-4 text-vert-600" /> : <Copy className="h-4 w-4" />}
+            </button>
+          </div>
+          <p className="mt-2 text-[12.5px] leading-relaxed text-ink-400">{t('admin.tempPasswordHint')}</p>
+        </div>
+      )}
+
+      {error && <p className="mt-3 text-[13.5px] text-red-600">{error}</p>}
+    </Panel>
   )
 }
 
@@ -263,6 +346,8 @@ export default function UserDetail() {
             </dl>
             <ContactLine label={t('auth.phone')} phone={u.phone} />
           </Panel>
+
+          {u.role !== 'admin' && <AccessPanel u={u} />}
 
           <Panel title={t('verification.title')}>
             {u.verification ? (
