@@ -10,7 +10,7 @@ const ROUTES = [
   '/contact', '/a-propos', '/mentions-legales', '/confidentialite', '/conditions', '/page-absente',
   '/tableau-de-bord/employeur', '/tableau-de-bord/travailleur',
   '/admin', '/admin/utilisateurs', '/admin/utilisateurs/inexistant', '/admin/annonces', '/admin/verifications',
-  '/admin/signalements', '/admin/categories', '/admin/parametres',
+  '/admin/signalements', '/admin/categories', '/admin/acces', '/admin/parametres',
 ]
 
 // `localstorage-file` : avertissement de jsdom émis au premier accès au

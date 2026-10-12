@@ -11,6 +11,15 @@ export async function fetchUsers() {
     .order('created_at', { ascending: false })
   if (error) throw error
 
+  // E-mails (auth.users, via une fonction réservée à l'admin) et téléphones
+  // (private_contact, lisible par l'admin) : deux requêtes pour toute la liste.
+  const [emails, contacts] = await Promise.all([
+    supabase.rpc('admin_user_emails'),
+    supabase.from('private_contact').select('profile_id, phone'),
+  ])
+  const emailOf = Object.fromEntries((emails.data || []).map((r) => [r.id, r.email]))
+  const phoneOf = Object.fromEntries((contacts.data || []).map((r) => [r.profile_id, r.phone]))
+
   return (data || []).map((row) => ({
     id: row.id,
     name: row.full_name,
@@ -22,7 +31,20 @@ export async function fetchUsers() {
     status: row.status,
     verified: row.role === 'worker' ? !!row.worker_profiles?.verified : !!row.employer_profiles?.verified,
     joined: row.created_at ? row.created_at.slice(0, 10) : '',
+    email: emailOf[row.id] || '',
+    phone: phoneOf[row.id] || '',
   }))
+}
+
+/**
+ * Les fonctions Edge revérifient la session côté serveur. Si elle a été
+ * révoquée (déconnexion depuis un autre appareil, par exemple), le jeton du
+ * navigateur reste lisible pour les pages mais la fonction répond
+ * « unauthenticated » : on ferme alors la session locale, et la garde des
+ * espaces renvoie vers la connexion au lieu de laisser un message obscur.
+ */
+async function endRevokedSession(body) {
+  if (body?.error === 'unauthenticated') await supabase.auth.signOut({ scope: 'local' })
 }
 
 /**
@@ -35,6 +57,7 @@ export async function deleteUserAccount(userId) {
   if (error) {
     // Réponse d'erreur de la fonction : on remonte sa raison plutôt qu'un message générique.
     const body = await error.context?.json?.().catch(() => null)
+    await endRevokedSession(body)
     throw new Error(body?.detail || body?.error || error.message)
   }
   if (!data?.ok) throw new Error(data?.error || 'delete failed')
@@ -137,12 +160,20 @@ export async function getVerificationDocumentUrl(path) {
 
 // ── Signalements ────────────────────────────────────────────────────
 
-export async function fetchReports() {
+/**
+ * Signalements ouverts (`open`) ou traités (`closed`), avec le déclarant,
+ * sa précision et, une fois traités, la décision prise.
+ */
+export async function fetchReports(status = 'open') {
   const { data, error } = await supabase
     .from('reports')
-    .select('id, kind, reason, severity, created_at, job_id, worker_id, jobs(title), worker:worker_id(full_name, status)')
-    .eq('status', 'open')
-    .order('created_at', { ascending: false })
+    .select(
+      'id, kind, reason, severity, details, status, resolution, admin_note, created_at, resolved_at, job_id, worker_id, ' +
+      'jobs(title, status), worker:worker_id(full_name, status, role), reporter:reporter_id(full_name)'
+    )
+    .eq('status', status)
+    .order(status === 'open' ? 'created_at' : 'resolved_at', { ascending: false })
+    .limit(status === 'open' ? 500 : 100)
   if (error) throw error
 
   return (data || []).map((r) => ({
@@ -151,30 +182,43 @@ export async function fetchReports() {
     kind: r.kind,
     reason: r.reason,
     severity: r.severity,
+    details: r.details || '',
+    reporter: r.reporter?.full_name || '',
     date: r.created_at ? r.created_at.slice(0, 10) : '',
+    resolution: r.resolution,
+    adminNote: r.admin_note || '',
+    resolvedAt: r.resolved_at ? r.resolved_at.slice(0, 10) : '',
     // Cibles du signalement : sans elles, l'admin ne pouvait que « classer »
     // un signalement, jamais agir sur ce qui était signalé.
     jobId: r.job_id,
+    jobOnline: r.jobs?.status === 'online',
     workerId: r.worker_id,
     workerSuspended: r.worker?.status === 'suspended',
   }))
 }
 
-export async function closeReport(reportId) {
-  const { error } = await supabase.from('reports').update({ status: 'closed' }).eq('id', reportId)
+/**
+ * Clôt un ou plusieurs signalements d'une même cible en traçant la décision :
+ * `dismissed` (sans suite), `content_removed` (annonce retirée) ou
+ * `account_suspended` (compte suspendu), avec une note interne facultative.
+ */
+export async function closeReports(reportIds, { resolution = 'dismissed', note = '' } = {}) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { error } = await supabase
+    .from('reports')
+    .update({
+      status: 'closed',
+      resolution,
+      admin_note: note.trim() || null,
+      resolved_at: new Date().toISOString(),
+      resolved_by: user?.id,
+    })
+    .in('id', reportIds)
   if (error) throw error
 }
 
-/**
- * Suppression d'une annonce par l'admin ; candidatures et signalements suivent
- * en cascade. Le `.select()` confirme la suppression : refusée par RLS, elle
- * renverrait zéro ligne sans erreur.
- */
-export async function deleteJob(jobId) {
-  const { data, error } = await supabase.from('jobs').delete().eq('id', jobId).select('id')
-  if (error) throw error
-  if (!data || data.length === 0) throw new Error('delete refused')
-}
 
 // ── Vue d'ensemble ─────────────────────────────────────────────────
 
@@ -304,4 +348,73 @@ export async function fetchUserDetail(id) {
     jobs,
     applications,
   }
+}
+
+// ── Accès au compte (dépannage) ────────────────────────────────────────
+
+/**
+ * Mot de passe temporaire généré côté serveur (fonction Edge
+ * `admin-set-password`), renvoyé une seule fois pour être dicté à l'utilisateur.
+ * Le compte devra en choisir un nouveau à sa prochaine connexion.
+ */
+export async function setTemporaryPassword(userId) {
+  const { data, error } = await supabase.functions.invoke('admin-set-password', { body: { userId } })
+  if (error) {
+    const body = await error.context?.json?.().catch(() => null)
+    await endRevokedSession(body)
+    throw new Error(body?.detail || body?.error || error.message)
+  }
+  if (!data?.password) throw new Error(data?.error || 'no password')
+  return data.password
+}
+
+/**
+ * Demandes de réinitialisation déposées depuis « Mot de passe oublié ? ».
+ * Pour chaque compte retrouvé, le numéro enregistré est joint : c'est à lui,
+ * et à lui seul, que l'admin transmet le mot de passe temporaire.
+ */
+export async function fetchResetRequests(status = 'pending') {
+  const { data, error } = await supabase
+    .from('password_reset_requests')
+    .select('id, phone, email, matched_profile_id, phone_matches, status, admin_note, created_at, resolved_at, profile:matched_profile_id(full_name, role, status)')
+    .eq('status', status)
+    .order('created_at', { ascending: status === 'pending' })
+    .limit(200)
+  if (error) throw error
+
+  const ids = [...new Set((data || []).map((r) => r.matched_profile_id).filter(Boolean))]
+  const phones = {}
+  if (ids.length) {
+    const { data: contacts } = await supabase.from('private_contact').select('profile_id, phone').in('profile_id', ids)
+    for (const c of contacts || []) phones[c.profile_id] = c.phone
+  }
+
+  return (data || []).map((r) => ({
+    id: r.id,
+    phone: r.phone,
+    email: r.email || '',
+    profileId: r.matched_profile_id,
+    name: r.profile?.full_name || '',
+    role: r.profile?.role || '',
+    suspended: r.profile?.status === 'suspended',
+    registeredPhone: r.matched_profile_id ? phones[r.matched_profile_id] || '' : '',
+    phoneMatches: r.phone_matches,
+    status: r.status,
+    adminNote: r.admin_note || '',
+    date: r.created_at.slice(0, 10),
+    time: r.created_at.slice(11, 16),
+    resolvedAt: r.resolved_at ? r.resolved_at.slice(0, 10) : '',
+  }))
+}
+
+/** Clôt une demande : `done` (mot de passe transmis) ou `rejected`, avec note interne. */
+export async function resolveResetRequest(id, status, note = '') {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { error } = await supabase
+    .from('password_reset_requests')
+    .update({ status, admin_note: note.trim() || null, resolved_at: new Date().toISOString(), resolved_by: user?.id })
+    .eq('id', id)
+  if (error) throw error
 }

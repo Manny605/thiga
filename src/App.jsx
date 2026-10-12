@@ -34,6 +34,7 @@ import AdminModeration from './pages/dash/admin/Moderation'
 import AdminReports from './pages/dash/admin/Reports'
 import AdminCategories from './pages/dash/admin/Categories'
 import AdminSettings from './pages/dash/admin/Settings'
+import AdminAccess from './pages/dash/admin/Access'
 import AdminUserDetail from './pages/dash/admin/UserDetail'
 
 // Active dès maintenant les comportements de React Router v7.
@@ -117,6 +118,7 @@ export default function App() {
                 <Route path="moderation" element={<Navigate to="/admin/annonces" replace />} />
                 <Route path="signalements" element={<AdminReports />} />
                 <Route path="categories" element={<AdminCategories />} />
+                <Route path="acces" element={<AdminAccess />} />
                 <Route path="parametres" element={<AdminSettings />} />
               </Route>
             </Routes>
