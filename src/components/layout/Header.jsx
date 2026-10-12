@@ -16,6 +16,7 @@ export function Wordmark({ className = '', imgClass = 'h-16 w-auto' }) {
 }
 
 export const LINKS = [
+  { to: '/', key: 'nav.home', end: true },
   { to: '/offres', key: 'nav.jobs' },
   { to: '/travailleurs', key: 'nav.workers' },
   { to: '/a-propos', key: 'nav.about' },
@@ -60,7 +61,7 @@ export default function Header() {
 
           <nav className="hidden items-center gap-9 xl:flex">
             {LINKS.map((l) => (
-              <NavLink key={l.to} to={l.to} className={linkCls}>
+              <NavLink key={l.to} to={l.to} end={l.end} className={linkCls}>
                 {t(l.key)}
               </NavLink>
             ))}
@@ -114,6 +115,7 @@ export default function Header() {
               <NavLink
                 key={l.to}
                 to={l.to}
+                end={l.end}
                 className="border-b border-sand-200/70 py-4 font-display text-2xl text-ink"
               >
                 {t(l.key)}

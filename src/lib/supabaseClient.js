@@ -5,7 +5,7 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!url || !anonKey) {
   throw new Error(
-    'VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY manquantes — vérifiez .env.local'
+    'VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY manquantes : vérifiez .env.local'
   )
 }
 

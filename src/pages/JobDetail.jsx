@@ -37,7 +37,7 @@ export default function JobDetail() {
   const [profileCv, setProfileCv] = useState(null)   // CV de référence
   const [cvFile, setCvFile] = useState(null)         // CV joint pour cette offre seulement
 
-  useDocumentMeta(job && `${job.title} — ${t(`cities.${job.city}`)}`, job?.desc)
+  useDocumentMeta(job && `${job.title} · ${t(`cities.${job.city}`)}`, job?.desc)
   const [cvError, setCvError] = useState('')
 
   const isWorker = isAuthenticated && profile?.role === 'worker'
@@ -346,9 +346,9 @@ export default function JobDetail() {
         <section className="border-t border-sand-200/70 bg-sand-100/40">
           <div className="shell py-16">
             <h2 className="text-[26px]">{t('jobs.similar')}</h2>
-            <div className="mt-8 grid gap-5 lg:grid-cols-2">
+            <div className="mt-8 grid auto-rows-fr gap-5 lg:grid-cols-2">
               {similar.map((j, i) => (
-                <Reveal key={j.id} delay={i * 80}>
+                <Reveal key={j.id} delay={i * 80} className="h-full">
                   <JobCard j={j} />
                 </Reveal>
               ))}

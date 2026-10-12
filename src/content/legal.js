@@ -24,7 +24,7 @@ export const LEGAL = {
         {
           h: 'Hébergement',
           p: [
-            'Le site est servi par [[Netlify, Inc. ou Vercel Inc. — selon l’hébergeur retenu]].',
+            'Le site est servi par [[Netlify, Inc. ou Vercel Inc., selon l’hébergeur retenu]].',
             'Les comptes, profils, annonces, documents et fichiers sont stockés par Supabase, Inc. ([[adresse de l’hébergeur, à reprendre de supabase.com/privacy]]), dans un centre de données situé en Irlande (Union européenne).',
           ],
         },
@@ -170,7 +170,7 @@ export const LEGAL = {
         {
           h: 'الاستضافة',
           p: [
-            'يُقدَّم الموقع عبر [[Netlify أو Vercel — حسب المستضيف المعتمد]].',
+            'يُقدَّم الموقع عبر [[Netlify أو Vercel، حسب المستضيف المعتمد]].',
             'تُخزَّن الحسابات والملفات والعروض والوثائق لدى شركة Supabase, Inc. ‏([[عنوان المستضيف كما يرد في supabase.com/privacy]]) في مركز بيانات في أيرلندا (الاتحاد الأوروبي).',
           ],
         },

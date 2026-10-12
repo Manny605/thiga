@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { I18nProvider } from './i18n/I18nProvider'
 import { TradesProvider } from './trades/TradesProvider'
 import { AuthProvider } from './auth/AuthProvider'
@@ -33,6 +33,8 @@ import AdminUsers from './pages/dash/admin/Users'
 import AdminModeration from './pages/dash/admin/Moderation'
 import AdminReports from './pages/dash/admin/Reports'
 import AdminCategories from './pages/dash/admin/Categories'
+import AdminSettings from './pages/dash/admin/Settings'
+import AdminUserDetail from './pages/dash/admin/UserDetail'
 
 // Active dès maintenant les comportements de React Router v7.
 // Sans ces drapeaux, la console affiche deux avertissements de dépréciation.
@@ -108,9 +110,14 @@ export default function App() {
               >
                 <Route index element={<AdminOverview />} />
                 <Route path="utilisateurs" element={<AdminUsers />} />
-                <Route path="moderation" element={<AdminModeration />} />
+                <Route path="utilisateurs/:id" element={<AdminUserDetail />} />
+                <Route path="annonces" element={<AdminModeration kind="job" />} />
+                <Route path="verifications" element={<AdminModeration kind="profile" />} />
+                {/* Ancienne adresse du module unique : les liens déjà enregistrés restent valables. */}
+                <Route path="moderation" element={<Navigate to="/admin/annonces" replace />} />
                 <Route path="signalements" element={<AdminReports />} />
                 <Route path="categories" element={<AdminCategories />} />
+                <Route path="parametres" element={<AdminSettings />} />
               </Route>
             </Routes>
           </BrowserRouter>

@@ -229,7 +229,7 @@ export const WORKERS = [
 export const JOBS = [
   {
     id: 'j1',
-    title: 'Femme de ménage à temps plein — villa familiale',
+    title: 'Femme de ménage à temps plein, villa familiale',
     trade: 'menage',
     city: 'nouakchott',
     district: 'Tevragh Zeina',
@@ -269,7 +269,7 @@ export const JOBS = [
   },
   {
     id: 'j3',
-    title: 'Chauffeur de direction — société de négoce',
+    title: 'Chauffeur de direction, société de négoce',
     trade: 'chauffeur',
     city: 'nouakchott',
     district: 'Centre-ville',
@@ -287,7 +287,7 @@ export const JOBS = [
   },
   {
     id: 'j4',
-    title: 'Électricien — chantier résidentiel de 8 logements',
+    title: 'Électricien, chantier résidentiel de 8 logements',
     trade: 'electricien',
     city: 'nouadhibou',
     district: 'Zone industrielle',
@@ -323,7 +323,7 @@ export const JOBS = [
   },
   {
     id: 'j6',
-    title: 'Agent de sécurité de nuit — résidence',
+    title: 'Agent de sécurité de nuit, résidence',
     trade: 'securite',
     city: 'nouakchott',
     district: 'Arafat',
@@ -341,7 +341,7 @@ export const JOBS = [
   },
   {
     id: 'j7',
-    title: 'Plombier — dépannage et petites installations',
+    title: 'Plombier, dépannage et petites installations',
     trade: 'plombier',
     city: 'rosso',
     district: 'Centre',
@@ -359,7 +359,7 @@ export const JOBS = [
   },
   {
     id: 'j8',
-    title: 'Jardinier — entretien mensuel de jardin',
+    title: 'Jardinier, entretien mensuel de jardin',
     trade: 'jardinier',
     city: 'nouakchott',
     district: 'Tevragh Zeina',

@@ -83,7 +83,9 @@ export async function fetchWorkerById(id) {
     .eq('profile_id', id)
     .maybeSingle()
   if (error) throw error
-  return data ? mapWorker(data) : null
+  if (!data) return null
+  const [worker] = await withRatings([mapWorker(data)])
+  return worker
 }
 
 export async function fetchFeaturedWorkers(limit = 3) {

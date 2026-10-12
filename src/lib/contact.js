@@ -22,3 +22,13 @@ export function internationalDigits(phone) {
   const digits = String(phone || '').replace(/\D/g, '').replace(/^00/, '')
   return digits.length === 8 ? `222${digits}` : digits
 }
+
+/** Numéro mauritanien : 8 chiffres, commençant par 2, 3 ou 4 (mobiles et fixes). */
+export function isValidMrPhone(digits) {
+  return /^[234]\d{7}$/.test(digits)
+}
+
+/** « 22123456 » → « +222 22 12 34 56 », la forme enregistrée et affichée. */
+export function formatMrPhone(digits) {
+  return `+222 ${digits.replace(/(\d{2})(?=\d)/g, '$1 ')}`
+}

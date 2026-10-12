@@ -59,8 +59,15 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(() => {
     /** Inscription ; `data` alimente le trigger `handle_new_user` (role, full_name, phone, city, trade). */
+    // Le lien de confirmation ramène sur la connexion, qui redirige un compte
+    // tout juste confirmé vers son espace. L'URL doit figurer parmi les
+    // « Redirect URLs » de Supabase Auth, sinon Supabase renvoie au Site URL.
     const signUp = (email, password, data) =>
-      supabase.auth.signUp({ email, password, options: { data } })
+      supabase.auth.signUp({
+        email,
+        password,
+        options: { data, emailRedirectTo: `${window.location.origin}/connexion` },
+      })
 
     const signIn = (email, password) =>
       supabase.auth.signInWithPassword({ email, password })

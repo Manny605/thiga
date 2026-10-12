@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
-import { BadgeCheck, ImageOff, Search, ShieldOff, ShieldCheck, Undo2 } from 'lucide-react'
+import { Fragment, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { BadgeCheck, ImageOff, Search, ShieldOff, ShieldCheck, ShieldQuestion, Trash2, TriangleAlert, Undo2 } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useTrades } from '../../../trades/TradesProvider'
 import { CITIES } from '../../../data/mock'
@@ -14,13 +15,19 @@ const STATUS_TONE = { active: 'online', pending: 'pending', suspended: 'closed' 
 export default function Users() {
   const { t, n, d } = useI18n()
   const { tradeLabel } = useTrades()
-  const { users, patchUser } = useAdmin()
+  const { users, queue, patchUser, removeUser } = useAdmin()
+  // Statut du compte et vérification d'identité sont indépendants : un compte
+  // actif peut avoir une pièce d'identité en attente, on le signale à côté.
+  const identityPending = new Set(queue.filter((x) => x.kind === 'profile').map((x) => x.profileId))
 
   const [q, setQ] = useState('')
   const [role, setRole] = useState('')
   const [status, setStatus] = useState('')
   const [city, setCity] = useState('')
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const [confirmingId, setConfirmingId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   // `patchUser` remonte l'erreur : sans ce relais, un refus de droits côté
   // base ne laissait aucune trace à l'écran.
@@ -30,6 +37,21 @@ export default function Users() {
       await patchUser(id, patch)
     } catch {
       setError(t('dash.actionError'))
+    }
+  }
+
+  const remove = async (u) => {
+    setError('')
+    setMessage('')
+    setDeletingId(u.id)
+    try {
+      await removeUser(u.id)
+      setConfirmingId(null)
+      setMessage(`${t('admin.userDeleted')} ${u.name}`)
+    } catch (e) {
+      setError(`${t('admin.deleteError')} ${e.message || ''}`.trim())
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -47,6 +69,7 @@ export default function Users() {
   return (
     <>
       {error && <p className="mb-6 text-[14px] text-red-600">{error}</p>}
+      {message && <p className="mb-6 text-[14px] text-vert-700">{message}</p>}
 
       {/* Filtres */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -101,37 +124,59 @@ export default function Users() {
                 <th className="px-6 py-3 text-start font-medium">{t('admin.role')}</th>
                 <th className="px-6 py-3 text-start font-medium">{t('common.city')}</th>
                 <th className="px-6 py-3 text-start font-medium">{t('admin.joined')}</th>
-                <th className="px-6 py-3 text-start font-medium">{t('dash.status')}</th>
+                <th className="px-6 py-3 text-start font-medium">{t('admin.accountStatus')}</th>
                 <th className="px-6 py-3 text-end font-medium">{t('dash.action')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sand-200">
               {list.map((u) => (
-                <tr key={u.id} className="transition-colors hover:bg-sand-50/70">
+                <Fragment key={u.id}>
+                <tr className="transition-colors hover:bg-sand-50/70">
                   <td className="px-6 py-3.5">
                     <span className="flex items-center gap-3">
                       <Avatar name={u.name} src={u.avatar} size="sm" />
-                      <span className="flex items-center gap-1.5 font-medium text-ink">
+                      <Link to={`/admin/utilisateurs/${u.id}`} className="flex items-center gap-1.5 font-medium text-ink hover:text-vert-700 hover:underline">
                         {u.name}
                         {u.verified && <BadgeCheck className="h-3.5 w-3.5 text-vert-600" />}
-                      </span>
+                      </Link>
                     </span>
                   </td>
                   <td className="px-6 py-3.5 text-ink-600">
                     {t(`admin.${u.role}`)}
                     {u.trade && <span className="text-ink-400"> · {tradeLabel(u.trade)}</span>}
                   </td>
-                  <td className="px-6 py-3.5 text-ink-600">{u.city ? t(`cities.${u.city}`) : '—'}</td>
+                  <td className="px-6 py-3.5 text-ink-600">{u.city ? t(`cities.${u.city}`) : ''}</td>
                   <td className="px-6 py-3.5 tabular-nums text-ink-400">{d(u.joined)}</td>
                   <td className="px-6 py-3.5">
+                    <span className="flex flex-col items-start gap-1.5">
                     <StatusPill status={STATUS_TONE[u.status]}>{t(`admin.${u.status}`)}</StatusPill>
+                    {identityPending.has(u.id) && (
+                    <Link to="/admin/verifications" className="inline-flex items-center gap-1 rounded-full bg-ocre-100 px-2 py-0.5 text-[12px] font-medium text-ocre-700 hover:bg-ocre-300/40">
+                      <ShieldQuestion className="h-3 w-3" />
+                      {t('admin.identityPending')}
+                    </Link>
+                    )}
+                    </span>
                   </td>
                   <td className="px-6 py-3.5">
                     <span className="flex justify-end gap-1.5">
-                      <RowActions u={u} patchUser={apply} t={t} />
+                      <RowActions u={u} patchUser={apply} onDelete={() => setConfirmingId(u.id)} t={t} />
                     </span>
                   </td>
                 </tr>
+                {confirmingId === u.id && (
+                  <tr>
+                    <td colSpan={6} className="px-6 pb-4">
+                    <ConfirmDelete
+                      u={u}
+                      busy={deletingId === u.id}
+                      onConfirm={() => remove(u)}
+                      onCancel={() => setConfirmingId(null)}
+                    />
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
               ))}
             </tbody>
           </table>
@@ -144,19 +189,37 @@ export default function Users() {
               <div className="flex items-center gap-3.5">
                 <Avatar name={u.name} src={u.avatar} size="sm" />
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-1.5 truncate text-[14.5px] font-medium text-ink">
+                  <Link to={`/admin/utilisateurs/${u.id}`} className="flex items-center gap-1.5 truncate text-[14.5px] font-medium text-ink hover:text-vert-700">
                     {u.name}
                     {u.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-vert-600" />}
-                  </p>
+                  </Link>
                   <p className="mt-0.5 truncate text-[12.5px] text-ink-400">
                     {t(`admin.${u.role}`)}{u.city ? ` · ${t(`cities.${u.city}`)}` : ''}
                   </p>
                 </div>
                 <StatusPill status={STATUS_TONE[u.status]}>{t(`admin.${u.status}`)}</StatusPill>
               </div>
+              {identityPending.has(u.id) && (
+                <div className="mt-2">
+                    <Link to="/admin/verifications" className="inline-flex items-center gap-1 rounded-full bg-ocre-100 px-2 py-0.5 text-[12px] font-medium text-ocre-700 hover:bg-ocre-300/40">
+                      <ShieldQuestion className="h-3 w-3" />
+                      {t('admin.identityPending')}
+                    </Link>
+                </div>
+              )}
               <div className="mt-3 flex gap-1.5">
-                <RowActions u={u} patchUser={apply} t={t} />
+                <RowActions u={u} patchUser={apply} onDelete={() => setConfirmingId(u.id)} t={t} />
               </div>
+              {confirmingId === u.id && (
+                <div className="mt-3">
+                    <ConfirmDelete
+                      u={u}
+                      busy={deletingId === u.id}
+                      onConfirm={() => remove(u)}
+                      onCancel={() => setConfirmingId(null)}
+                    />
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -169,8 +232,8 @@ export default function Users() {
   )
 }
 
-/** Boutons d'action d'une ligne — partagés entre le tableau et les cartes. */
-function RowActions({ u, patchUser, t }) {
+/** Boutons d'action d'un compte : partagés par le tableau, les cartes et la fiche. */
+export function RowActions({ u, patchUser, onDelete, t }) {
   const btn =
     'grid h-9 w-9 place-items-center rounded-lg border transition-colors disabled:opacity-30'
 
@@ -215,6 +278,49 @@ function RowActions({ u, patchUser, t }) {
           <ImageOff className="h-4 w-4" />
         </button>
       )}
+
+      <button
+        onClick={onDelete}
+        title={t('admin.deleteUser')}
+        className={`${btn} border-sand-300 bg-white text-ink-400 hover:border-red-300 hover:bg-red-50 hover:text-red-600`}
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
     </>
+  )
+}
+
+/**
+ * Confirmation de suppression : irréversible, elle dit ce qui part avec le
+ * compte et ne tient pas en un clic.
+ */
+export function ConfirmDelete({ u, busy, onConfirm, onCancel }) {
+  const { t } = useI18n()
+  return (
+    <div role="alertdialog" aria-label={t('admin.deleteUser')} className="rounded-xl border border-red-200 bg-red-50/70 p-4">
+      <p className="flex items-start gap-2.5 text-[14px] leading-relaxed text-red-800">
+        <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+        <span>
+          {t('admin.deleteConfirmBefore')} <strong className="font-semibold">{u.name}</strong>{t('admin.deleteConfirmAfter')}{' '}
+          {t(u.role === 'employer' ? 'admin.deleteWhatEmployer' : 'admin.deleteWhatWorker')}
+        </span>
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2 ps-6">
+        <button
+          onClick={onConfirm}
+          disabled={busy}
+          className="h-9 rounded-lg bg-red-600 px-3.5 text-[13.5px] font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+        >
+          {busy ? t('admin.deleting') : t('admin.confirmDeleteUser')}
+        </button>
+        <button
+          onClick={onCancel}
+          disabled={busy}
+          className="h-9 rounded-lg border border-sand-300 bg-white px-3.5 text-[13.5px] text-ink-600 transition-colors hover:text-ink"
+        >
+          {t('dash.cancel')}
+        </button>
+      </div>
+    </div>
   )
 }

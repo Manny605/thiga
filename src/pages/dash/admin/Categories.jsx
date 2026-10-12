@@ -91,7 +91,7 @@ function TradeForm({ trade, existingIds, onSaved, onCancel }) {
         </div>
 
         <p className="text-[13.5px] text-ink-400">
-          {t('admin.tradeSlug')} : <span className="font-mono text-ink-600">{slug || '—'}</span>
+          {t('admin.tradeSlug')} : <span className="font-mono text-ink-600">{slug}</span>
           {!editing && <> · {t('admin.tradeSlugHint')}</>}
         </p>
 

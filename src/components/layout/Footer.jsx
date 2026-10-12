@@ -68,7 +68,7 @@ export default function Footer() {
 
       <div className="relative border-t border-sand-200/10">
         <div className="shell flex flex-col gap-2 py-5 text-[13px] text-sand-200/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} THIGA — {t('footer.rights')}</p>
+          <p>© {year} THIGA. {t('footer.rights')}</p>
           <div className="flex gap-5">
             <Link to="/mentions-legales" className="transition-colors hover:text-sand-100">{t('footer.legal')}</Link>
             <Link to="/confidentialite" className="transition-colors hover:text-sand-100">{t('footer.privacy')}</Link>

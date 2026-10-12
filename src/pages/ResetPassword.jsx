@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { dashPathFor } from '../auth/roles'
 import { supabase } from '../lib/supabaseClient'
 import { Wordmark } from '../components/layout/Header'
-import { Input } from '../components/ui/Field'
+import { PasswordInput } from '../components/ui/Field'
 import Button from '../components/ui/Button'
 
 const MIN_LENGTH = 8
@@ -65,20 +65,22 @@ export default function ResetPassword() {
       <>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t('auth.resetLede')}</p>
         <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
-          <Input
+          <PasswordInput
             id="reset-password"
             label={t('auth.newPassword')}
             hint={t('auth.resetHint')}
-            type="password"
+            showLabel={t('auth.showPassword')}
+            hideLabel={t('auth.hidePassword')}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <Input
+          <PasswordInput
             id="reset-confirm"
             label={t('auth.confirm')}
-            type="password"
+            showLabel={t('auth.showPassword')}
+            hideLabel={t('auth.hidePassword')}
             autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}

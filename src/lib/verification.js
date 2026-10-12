@@ -4,7 +4,7 @@ import { supabase } from './supabaseClient'
 export async function fetchMyVerification(employerId) {
   const { data, error } = await supabase
     .from('verification_requests')
-    .select('id, status, note, created_at, reviewed_at')
+    .select('id, status, note, reject_reason, review_note, created_at, reviewed_at')
     .eq('employer_id', employerId)
     .order('created_at', { ascending: false })
     .limit(1)

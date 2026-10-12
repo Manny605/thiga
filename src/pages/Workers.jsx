@@ -129,14 +129,14 @@ export default function Workers() {
 
       {/* Résultats */}
       <section className="shell py-12 md:py-16">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {loading ? (
             <p className="col-span-full text-center text-[14.5px] text-ink-400">{t('common.loading')}</p>
           ) : list.length === 0 ? (
             <EmptyState onReset={reset} />
           ) : (
             list.map((w, i) => (
-              <Reveal key={w.id} delay={Math.min(i, 6) * 60}>
+              <Reveal key={w.id} delay={Math.min(i, 6) * 60} className="h-full">
                 <WorkerCard w={w} />
               </Reveal>
             ))
