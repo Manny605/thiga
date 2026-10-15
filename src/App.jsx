@@ -4,6 +4,7 @@ import { TradesProvider } from './trades/TradesProvider'
 import { AuthProvider } from './auth/AuthProvider'
 import RequireRole from './auth/RequireRole'
 import PublicOnly from './auth/PublicOnly'
+import EmployersOnly from './auth/EmployersOnly'
 import Layout from './components/layout/Layout'
 import Home from './pages/Home'
 import Jobs from './pages/Jobs'
@@ -15,6 +16,7 @@ import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import About from './pages/About'
+import Contact from './pages/Contact'
 import Legal from './pages/Legal'
 import NotFound from './pages/NotFound'
 import EmployerLayout from './pages/dash/employer/EmployerLayout'
@@ -35,6 +37,7 @@ import AdminReports from './pages/dash/admin/Reports'
 import AdminCategories from './pages/dash/admin/Categories'
 import AdminSettings from './pages/dash/admin/Settings'
 import AdminAccess from './pages/dash/admin/Access'
+import AdminMessages from './pages/dash/admin/Messages'
 import AdminUserDetail from './pages/dash/admin/UserDetail'
 
 // Active dès maintenant les comportements de React Router v7.
@@ -52,13 +55,14 @@ export default function App() {
           <BrowserRouter future={future}>
             <Routes>
               {/* Pages vitrine : réservées aux visiteurs (cf. PublicOnly).
-                  Le catalogue reste ouvert à tous, connectés compris. */}
+                  Les offres sont ouvertes à tous ; les travailleurs, aux
+                  employeurs connectés et à l'admin (cf. EmployersOnly). */}
               <Route element={<Layout />}>
                 <Route index element={<PublicOnly><Home /></PublicOnly>} />
                 <Route path="offres" element={<Jobs />} />
                 <Route path="offres/:id" element={<JobDetail />} />
-                <Route path="travailleurs" element={<Workers />} />
-                <Route path="travailleurs/:id" element={<WorkerDetail />} />
+                <Route path="travailleurs" element={<EmployersOnly><Workers /></EmployersOnly>} />
+                <Route path="travailleurs/:id" element={<EmployersOnly><WorkerDetail /></EmployersOnly>} />
                 <Route path="connexion" element={<PublicOnly><Login /></PublicOnly>} />
                 <Route path="inscription" element={<PublicOnly><Register /></PublicOnly>} />
                 <Route path="mot-de-passe-oublie" element={<PublicOnly><ForgotPassword /></PublicOnly>} />
@@ -66,6 +70,7 @@ export default function App() {
                     qui renverrait sinon l'utilisateur vers son portail. */}
                 <Route path="nouveau-mot-de-passe" element={<ResetPassword />} />
                 <Route path="a-propos" element={<PublicOnly><About /></PublicOnly>} />
+                <Route path="contact" element={<Contact />} />
                 <Route path="mentions-legales" element={<Legal doc="mentions-legales" />} />
                 <Route path="confidentialite" element={<Legal doc="confidentialite" />} />
                 <Route path="conditions" element={<Legal doc="conditions" />} />
@@ -119,6 +124,7 @@ export default function App() {
                 <Route path="signalements" element={<AdminReports />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="acces" element={<AdminAccess />} />
+                <Route path="messages" element={<AdminMessages />} />
                 <Route path="parametres" element={<AdminSettings />} />
               </Route>
             </Routes>

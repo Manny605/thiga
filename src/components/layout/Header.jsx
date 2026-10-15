@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutGrid, LogOut, Menu, X, Languages } from 'lucide-react'
 import { useI18n } from '../../i18n/I18nProvider'
 import { useAuth } from '../../auth/AuthProvider'
-import { dashPathFor } from '../../auth/roles'
+import { canViewWorkers, dashPathFor } from '../../auth/roles'
 import Button from '../ui/Button'
 import logoMark from '../../../assets/logo-removebg.png'
 
@@ -18,9 +18,15 @@ export function Wordmark({ className = '', imgClass = 'h-16 w-auto' }) {
 export const LINKS = [
   { to: '/', key: 'nav.home', end: true },
   { to: '/offres', key: 'nav.jobs' },
-  { to: '/travailleurs', key: 'nav.workers' },
+  { to: '/travailleurs', key: 'nav.workers', employersOnly: true },
   { to: '/a-propos', key: 'nav.about' },
+  { to: '/contact', key: 'nav.contact' },
 ]
+
+/** Liens visibles par ce compte : « Travailleurs » est réservé aux employeurs et à l'admin. */
+export function visibleLinks(profile) {
+  return LINKS.filter((l) => !l.employersOnly || canViewWorkers(profile))
+}
 
 export default function Header() {
   const { t, toggle, other } = useI18n()
@@ -60,7 +66,7 @@ export default function Header() {
           <Wordmark />
 
           <nav className="hidden items-center gap-9 xl:flex">
-            {LINKS.map((l) => (
+            {visibleLinks(profile).map((l) => (
               <NavLink key={l.to} to={l.to} end={l.end} className={linkCls}>
                 {t(l.key)}
               </NavLink>
@@ -111,7 +117,7 @@ export default function Header() {
       {open && (
         <div className="fixed inset-x-0 bottom-0 top-20 z-40 animate-fade overflow-y-auto border-t border-sand-300 bg-sand-50 xl:hidden">
           <nav className="shell stagger flex flex-col py-4">
-            {LINKS.map((l) => (
+            {visibleLinks(profile).map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}

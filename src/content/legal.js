@@ -17,7 +17,7 @@ export const LEGAL = {
           p: [
             'THIGA est édité par [[raison sociale]], [[forme juridique]] au capital de [[montant]] MRU, dont le siège est situé [[adresse]], Nouakchott, Mauritanie.',
             'Registre du commerce : [[numéro RC]] · NIF : [[numéro NIF]].',
-            'Contact : [[adresse e-mail de contact]] · [[numéro de téléphone]].',
+            'Contact : fatouelbech38@gmail.com · [[numéro de téléphone]].',
             'Directeur de la publication : [[nom et fonction]].',
           ],
         },
@@ -37,7 +37,7 @@ export const LEGAL = {
         {
           h: 'Signaler un contenu',
           p: [
-            'Chaque annonce et chaque profil porte un bouton « Signaler ». Pour toute autre demande, écrivez à [[adresse e-mail de contact]].',
+            'Chaque annonce et chaque profil porte un bouton « Signaler ». Pour toute autre demande, écrivez à fatouelbech38@gmail.com.',
           ],
         },
       ],
@@ -50,7 +50,7 @@ export const LEGAL = {
         {
           h: 'Responsable du traitement',
           p: [
-            '[[raison sociale]], [[adresse]], Nouakchott. Contact pour vos données : [[adresse e-mail de contact]].',
+            '[[raison sociale]], [[adresse]], Nouakchott. Contact pour vos données : fatouelbech38@gmail.com.',
             'Le traitement est conduit conformément à la loi mauritanienne n° 2017-020 relative à la protection des données à caractère personnel.',
           ],
         },
@@ -58,13 +58,14 @@ export const LEGAL = {
           h: 'Données collectées',
           p: [
             'À l’inscription : nom, adresse e-mail, mot de passe (stocké chiffré, jamais lisible), rôle, ville et, si vous le donnez, numéro de téléphone.',
-            'Selon votre usage : photo de profil, métier, expérience, compétences, langues, tarif, présentation, CV, pièce d’identité envoyée pour vérification, annonces, candidatures et leurs messages, avis donnés et reçus, signalements.',
+            'Selon votre usage : photo de profil, métier, expérience, compétences, langues, tarif, présentation, CV, pièce d’identité envoyée pour vérification, annonces, candidatures et leurs messages, avis donnés et reçus, signalements, messages envoyés depuis la page Contact (nom, numéro ou e-mail, message).',
           ],
         },
         {
           h: 'Qui voit quoi',
           p: [
-            'Public : le profil d’un travailleur vérifié (nom, photo, métier, ville, expérience, présentation, tarif, avis reçus), les annonces validées et non expirées, les avis.',
+            'Public : les annonces validées et non expirées, le nom des employeurs et les avis qu’ils reçoivent (sans le nom de leur auteur).',
+            'Employeurs connectés uniquement : le profil d’un travailleur vérifié (nom, photo, métier, ville, expérience, présentation, tarif, avis reçus). Les autres travailleurs et les visiteurs ne le voient pas.',
             'Votre numéro de téléphone n’est jamais public. Il est communiqué à l’autre partie uniquement lorsqu’un employeur présélectionne ou embauche sur une candidature qui vous relie.',
             'Votre CV n’est visible que par les employeurs à qui vous l’avez envoyé avec une candidature, par des liens temporaires.',
             'Votre pièce d’identité n’est visible que par l’équipe d’administration, pour la vérification.',
@@ -87,7 +88,7 @@ export const LEGAL = {
         {
           h: 'Vos droits',
           p: [
-            'Vous pouvez modifier vos informations et votre photo à tout moment depuis vos paramètres. Pour obtenir une copie de vos données, les faire corriger ou supprimer votre compte, écrivez à [[adresse e-mail de contact]] ; une réponse vous est apportée sous [[délai]].',
+            'Vous pouvez modifier vos informations et votre photo à tout moment depuis vos paramètres. Pour obtenir une copie de vos données, les faire corriger ou supprimer votre compte, écrivez à fatouelbech38@gmail.com ; une réponse vous est apportée sous [[délai]].',
           ],
         },
         {
@@ -163,7 +164,7 @@ export const LEGAL = {
           p: [
             'تنشر منصة ثيغا شركة [[الاسم التجاري]]، [[الشكل القانوني]] برأس مال قدره [[المبلغ]] أوقية، ومقرها [[العنوان]]، نواكشوط، موريتانيا.',
             'السجل التجاري: [[رقم السجل]] · الرقم الضريبي: [[الرقم الضريبي]].',
-            'للتواصل: [[البريد الإلكتروني]] · [[رقم الهاتف]].',
+            'للتواصل: fatouelbech38@gmail.com · [[رقم الهاتف]].',
             'مدير النشر: [[الاسم والصفة]].',
           ],
         },
@@ -183,7 +184,7 @@ export const LEGAL = {
         {
           h: 'الإبلاغ عن محتوى',
           p: [
-            'في كل عرض وكل ملف زر «إبلاغ». ولأي طلب آخر راسلونا على [[البريد الإلكتروني]].',
+            'في كل عرض وكل ملف زر «إبلاغ». ولأي طلب آخر راسلونا على fatouelbech38@gmail.com.',
           ],
         },
       ],
@@ -196,7 +197,7 @@ export const LEGAL = {
         {
           h: 'المسؤول عن المعالجة',
           p: [
-            '[[الاسم التجاري]]، [[العنوان]]، نواكشوط. للتواصل بشأن بياناتك: [[البريد الإلكتروني]].',
+            '[[الاسم التجاري]]، [[العنوان]]، نواكشوط. للتواصل بشأن بياناتك: fatouelbech38@gmail.com.',
             'تتم المعالجة وفقًا للقانون الموريتاني رقم 2017-020 المتعلق بحماية البيانات ذات الطابع الشخصي.',
           ],
         },
@@ -204,13 +205,14 @@ export const LEGAL = {
           h: 'البيانات المجمَّعة',
           p: [
             'عند التسجيل: الاسم، البريد الإلكتروني، كلمة المرور (مخزنة مشفرة ولا يمكن قراءتها)، الدور، المدينة، ورقم الهاتف إن قدّمته.',
-            'حسب استعمالك: صورة الملف، المهنة، الخبرة، المهارات، اللغات، الأجر، النبذة، السيرة الذاتية، وثيقة الهوية المرسلة للتحقق، العروض، الطلبات ورسائلها، التقييمات المقدَّمة والمستلمة، البلاغات.',
+            'حسب استعمالك: صورة الملف، المهنة، الخبرة، المهارات، اللغات، الأجر، النبذة، السيرة الذاتية، وثيقة الهوية المرسلة للتحقق، العروض، الطلبات ورسائلها، التقييمات المقدَّمة والمستلمة، البلاغات، الرسائل المرسلة من صفحة «اتصل بنا» (الاسم، الرقم أو البريد، الرسالة).',
           ],
         },
         {
           h: 'من يرى ماذا',
           p: [
-            'للعموم: ملف العامل الموثَّق (الاسم، الصورة، المهنة، المدينة، الخبرة، النبذة، الأجر، التقييمات)، العروض المصادق عليها وغير المنتهية، والتقييمات.',
+            'للعموم: العروض المصادق عليها وغير المنتهية، أسماء أصحاب العمل والتقييمات التي يتلقونها (دون اسم كاتبها).',
+            'لأصحاب العمل المسجَّلين فقط: ملف العامل الموثَّق (الاسم، الصورة، المهنة، المدينة، الخبرة، النبذة، الأجر، التقييمات). لا يراه العمال الآخرون ولا الزوار.',
             'رقم هاتفك لا يُنشر أبدًا للعموم، ولا يُبلَّغ للطرف الآخر إلا عندما يقبل صاحب العمل مبدئيًا أو يوظّف على طلب يجمعكما.',
             'سيرتك الذاتية لا يراها إلا أصحاب العمل الذين أرسلتها إليهم مع طلب، عبر روابط مؤقتة.',
             'وثيقة هويتك لا يراها إلا فريق الإدارة لغرض التحقق.',
@@ -233,7 +235,7 @@ export const LEGAL = {
         {
           h: 'حقوقك',
           p: [
-            'يمكنك تعديل معلوماتك وصورتك في أي وقت من الإعدادات. وللحصول على نسخة من بياناتك أو تصحيحها أو حذف حسابك، راسلنا على [[البريد الإلكتروني]]؛ ويصلك الرد خلال [[المهلة]].',
+            'يمكنك تعديل معلوماتك وصورتك في أي وقت من الإعدادات. وللحصول على نسخة من بياناتك أو تصحيحها أو حذف حسابك، راسلنا على fatouelbech38@gmail.com؛ ويصلك الرد خلال [[المهلة]].',
           ],
         },
         {

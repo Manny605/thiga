@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom'
-import { ClipboardCheck, Flag, KeyRound, LayoutGrid, Settings, ShieldCheck, Tags, Users2 } from 'lucide-react'
+import { ClipboardCheck, Flag, Inbox, KeyRound, LayoutGrid, Settings, ShieldCheck, Tags, Users2 } from 'lucide-react'
 import { useI18n } from '../../../i18n/I18nProvider'
 import { useAuth } from '../../../auth/AuthProvider'
 import {
   fetchUsers, setUserStatus, setUserVerified, deleteUserAccount,
   fetchModerationQueue, resolveJob, resolveVerification,
-  fetchReports, closeReports as closeReportsRequest, fetchResetRequests,
+  fetchReports, closeReports as closeReportsRequest, fetchResetRequests, fetchContactMessages,
 } from '../../../lib/admin'
 import DashShell from '../../../components/dashboard/DashShell'
 import { avatarUrl, removeAvatar } from '../../../lib/avatar'
@@ -18,6 +18,7 @@ export const ADMIN_NAV = [
   { to: '/admin/verifications', icon: ShieldCheck, label: 'dash.verifications', lede: 'admin.verificationsLede', queue: 'profile' },
   { to: '/admin/signalements', icon: Flag, label: 'dash.reports', lede: 'admin.reportsLede' },
   { to: '/admin/acces', icon: KeyRound, label: 'dash.access', lede: 'admin.accessModuleLede' },
+  { to: '/admin/messages', icon: Inbox, label: 'dash.messages', lede: 'admin.messagesLede' },
   { to: '/admin/categories', icon: Tags, label: 'dash.categories', lede: 'admin.categoriesLede' },
   { to: '/admin/parametres', icon: Settings, label: 'dash.settings', lede: 'admin.settingsLede' },
 ]
@@ -36,15 +37,19 @@ export default function AdminLayout() {
   const [reports, setReports] = useState([])
   const [users, setUsers] = useState([])
   const [resetRequests, setResetRequests] = useState([])
+  const [contactMessages, setContactMessages] = useState([])
   const [loadError, setLoadError] = useState('')
 
   const load = useCallback(async () => {
     try {
-      const [q, r, u, a] = await Promise.all([fetchModerationQueue(), fetchReports(), fetchUsers(), fetchResetRequests()])
+      const [q, r, u, a, m] = await Promise.all([
+        fetchModerationQueue(), fetchReports(), fetchUsers(), fetchResetRequests(), fetchContactMessages(),
+      ])
       setQueue(q)
       setReports(r)
       setUsers(u)
       setResetRequests(a)
+      setContactMessages(m)
       setLoadError('')
     } catch {
       setLoadError(t('dash.loadError'))
@@ -63,10 +68,14 @@ export default function AdminLayout() {
       reports,
       users,
       resetRequests,
+      contactMessages,
       reload: load,
 
       /** Demande d'accès traitée : elle quitte la file (l'historique la garde). */
       dropResetRequest: (id) => setResetRequests((list) => list.filter((x) => x.id !== id)),
+
+      /** Message traité ou supprimé : il quitte la boîte de réception. */
+      dropContactMessage: (id) => setContactMessages((list) => list.filter((x) => x.id !== id)),
 
       resolveQueue: async (id, decision, detail) => {
         const item = queue.find((x) => x.id === id)
@@ -116,7 +125,7 @@ export default function AdminLayout() {
         load()
       },
     }),
-    [queue, reports, users, resetRequests, load]
+    [queue, reports, users, resetRequests, contactMessages, load]
   )
 
   const nav = ADMIN_NAV.map((item) => ({
@@ -128,6 +137,8 @@ export default function AdminLayout() {
         ? reports.length
         : item.to === '/admin/acces'
         ? resetRequests.length
+        : item.to === '/admin/messages'
+        ? contactMessages.length
         : 0,
   }))
 
@@ -149,6 +160,13 @@ export default function AdminLayout() {
       body: r.name || r.phone,
       date: r.date,
       to: '/admin/acces',
+    })),
+    ...contactMessages.map((m) => ({
+      id: `contact:${m.id}`,
+      title: t('notif.contactMessage'),
+      body: `${m.name} · ${t(`contact.subjects.${m.subject}`)}`,
+      date: m.date,
+      to: '/admin/messages',
     })),
     ...reports.map((r) => ({
       id: `report:${r.id}`,
