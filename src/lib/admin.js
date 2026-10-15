@@ -418,3 +418,57 @@ export async function resolveResetRequest(id, status, note = '') {
     .eq('id', id)
   if (error) throw error
 }
+
+/** Messages envoyés depuis la page Contact : `new` (à traiter) ou `handled`. */
+export async function fetchContactMessages(status = 'new') {
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('id, name, phone, email, subject, message, profile_id, status, admin_note, created_at, handled_at, emailed_at, profile:profile_id(full_name, role)')
+    .eq('status', status)
+    .order(status === 'new' ? 'created_at' : 'handled_at', { ascending: status === 'new' })
+    .limit(200)
+  if (error) throw error
+
+  return (data || []).map((m) => ({
+    id: m.id,
+    name: m.name,
+    phone: m.phone || '',
+    email: m.email || '',
+    subject: m.subject,
+    message: m.message,
+    profileId: m.profile_id,
+    accountName: m.profile?.full_name || '',
+    role: m.profile?.role || '',
+    status: m.status,
+    adminNote: m.admin_note || '',
+    date: m.created_at.slice(0, 10),
+    time: m.created_at.slice(11, 16),
+    handledAt: m.handled_at ? m.handled_at.slice(0, 10) : '',
+    emailed: !!m.emailed_at,
+  }))
+}
+
+/** (Re)transmet un message par e-mail à la propriétaire ; vrai si l'e-mail est parti. */
+export async function emailContactMessage(id) {
+  const { data, error } = await supabase.functions.invoke('contact-email', { body: { id } })
+  if (error) throw error
+  return !!data?.sent
+}
+
+/** Classe un message dans « Traités », avec une note interne facultative. */
+export async function handleContactMessage(id, note = '') {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { error } = await supabase
+    .from('contact_messages')
+    .update({ status: 'handled', admin_note: note.trim() || null, handled_at: new Date().toISOString(), handled_by: user?.id })
+    .eq('id', id)
+  if (error) throw error
+}
+
+/** Suppression définitive (spam, message hors sujet). */
+export async function deleteContactMessage(id) {
+  const { error } = await supabase.from('contact_messages').delete().eq('id', id)
+  if (error) throw error
+}

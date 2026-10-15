@@ -35,9 +35,9 @@ export default function ReviewList({ profileId, className = '' }) {
         {reviews.map((r) => (
           <li key={r.id} className="rounded-2xl border border-sand-200/70 bg-white p-5 shadow-card">
             <div className="flex items-center gap-3">
-              <Avatar name={r.reviewerName} src={r.reviewerAvatar} size="sm" />
+              <Avatar name={r.reviewerName || t('reviews.hiddenReviewer')} src={r.reviewerAvatar} size="sm" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[14.5px] font-medium text-ink">{r.reviewerName}</p>
+                <p className="truncate text-[14.5px] font-medium text-ink">{r.reviewerName || t('reviews.hiddenReviewer')}</p>
                 <p className="text-[12.5px] text-ink-400">
                   {r.reviewerRole && <>{t(`admin.${r.reviewerRole}`)} · </>}{d(r.date)}
                 </p>

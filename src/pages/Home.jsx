@@ -4,14 +4,12 @@ import { ArrowRight, BadgeCheck, FileCheck2, Flag } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider'
 import { useTrades } from '../trades/TradesProvider'
 import { fetchPublicStats } from '../lib/stats'
-import { fetchFeaturedWorkers } from '../lib/workers'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import Reveal from '../components/ui/Reveal'
 import SectionHeading from '../components/ui/SectionHeading'
 import TradeIcon from '../components/TradeIcon'
 import HomeOffers from '../components/HomeOffers'
-import WorkerCard from '../components/WorkerCard'
 import bannerSm from '../../assets/hero-banner-800.webp'
 import bannerLg from '../../assets/hero-banner-1400.webp'
 
@@ -64,12 +62,10 @@ export default function Home() {
   const { t } = useI18n()
   const { visibleTrades, tradeLabel } = useTrades()
   const [stats, setStats] = useState(null)
-  const [workers, setWorkers] = useState([])
 
   useEffect(() => {
     let active = true
     fetchPublicStats().then((s) => { if (active) setStats(s) }).catch(() => {})
-    fetchFeaturedWorkers(3).then((w) => { if (active) setWorkers(w) }).catch(() => {})
     return () => { active = false }
   }, [])
 
@@ -116,7 +112,7 @@ export default function Home() {
               {visibleTrades.map((tr, i) => (
                 <Reveal key={tr.id} delay={(i % 5) * 60}>
                   <Link
-                    to={`/travailleurs?metier=${tr.id}`}
+                    to={`/offres?metier=${tr.id}`}
                     className="group flex h-full flex-col gap-4 rounded-2xl border border-sand-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-vert-200 hover:shadow-lift"
                   >
                     <span className="grid h-11 w-11 place-items-center rounded-xl bg-vert-50 text-vert-700 transition-colors group-hover:bg-vert-700 group-hover:text-sand-50">
@@ -134,31 +130,27 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── 03 · Profils en vedette (vrais profils vérifiés) ─── */}
-      {workers.length > 0 && (
-        <section className="border-t border-sand-200 bg-sand-50">
-          <div className="shell py-20 md:py-24">
-            <SectionHeading
-              num="03"
-              kicker={t('nav.workers')}
-              title={t('home.featuredWorkers')}
-              action={
-                <Button to="/travailleurs" variant="outline" size="sm">
-                  {t('nav.workers')}
-                  <ArrowRight className="flip-rtl h-4 w-4" />
-                </Button>
-              }
-            />
-            <div className="mt-10 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {workers.map((w, i) => (
-                <Reveal key={w.id} delay={i * 80} className="h-full">
-                  <WorkerCard w={w} />
-                </Reveal>
-              ))}
+      {/* ── 03 · Recruter : les profils sont réservés aux employeurs ─ */}
+      <section className="border-t border-sand-200 bg-sand-50">
+        <div className="shell py-20 md:py-24">
+          <Reveal className="grid items-center gap-8 rounded-3xl border border-sand-200 bg-white p-8 shadow-card md:grid-cols-12 md:p-12">
+            <div className="md:col-span-8">
+              <span className="eyebrow">{t('home.recruitK')}</span>
+              <h2 className="mt-3 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold leading-tight">{t('home.recruitTitle')}</h2>
+              <p className="mt-3 max-w-xl text-[15.5px] leading-relaxed text-ink-600">{t('home.recruitLede')}</p>
             </div>
-          </div>
-        </section>
-      )}
+            <div className="flex flex-col gap-3 md:col-span-4">
+              <Button to="/inscription?role=employeur" size="lg">
+                {t('auth.employersOnlyCta')}
+                <ArrowRight className="flip-rtl h-4 w-4" />
+              </Button>
+              <Button to="/connexion" state={{ from: { pathname: '/travailleurs' } }} variant="outline" size="lg">
+                {t('home.recruitLogin')}
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* ── 04 · Comment ça marche ───────────────────────────── */}
       <section className="border-t border-sand-200 bg-white">
@@ -211,7 +203,7 @@ export default function Home() {
                 {t('nav.register')}
                 <ArrowRight className="flip-rtl h-4 w-4" />
               </Button>
-              <Button to="/travailleurs" size="lg" className="border border-sand-50/25 bg-transparent hover:bg-white/10">
+              <Button to="/inscription?role=employeur" size="lg" className="border border-sand-50/25 bg-transparent hover:bg-white/10">
                 {t('home.ctaEmployer')}
               </Button>
             </div>

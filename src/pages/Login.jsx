@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n/I18nProvider'
 import { useAuth } from '../auth/AuthProvider'
-import { dashPathFor } from '../auth/roles'
+import { afterLoginPath } from '../auth/roles'
 import { fetchProfile } from '../lib/profile'
 import { Wordmark } from '../components/layout/Header'
 import { Checkbox, Input, PasswordInput } from '../components/ui/Field'
@@ -12,6 +12,7 @@ export default function Login() {
   const { t } = useI18n()
   const { signIn, signOut } = useAuth()
   const navigate = useNavigate()
+  const { state } = useLocation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -49,7 +50,7 @@ export default function Login() {
     }
 
     setSubmitting(false)
-    navigate(dashPathFor(profile?.role) || '/', { replace: true })
+    navigate(afterLoginPath(profile, state?.from) || '/', { replace: true })
   }
 
   return (
@@ -66,6 +67,14 @@ export default function Login() {
         <div className="rounded-3xl border border-sand-200 bg-white p-8 shadow-card sm:p-9">
           <h1 className="text-[28px] font-semibold leading-tight">{t('auth.loginTitle')}</h1>
           <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{t('auth.loginLede')}</p>
+          {state?.reason === 'employersOnly' && (
+            <p className="mt-4 rounded-xl border border-ocre-300/70 bg-ocre-50 px-4 py-3 text-[14px] leading-relaxed text-ink-800">
+              {t('auth.employersOnly')}{' '}
+              <Link to="/inscription?role=employeur" className="font-medium text-vert-700 hover:underline">
+                {t('auth.employersOnlyCta')}
+              </Link>
+            </p>
+          )}
 
           <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
             <Input

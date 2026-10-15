@@ -3,7 +3,7 @@ import { Languages } from 'lucide-react'
 import { useI18n } from '../../i18n/I18nProvider'
 import { useAuth } from '../../auth/AuthProvider'
 import { dashPathFor } from '../../auth/roles'
-import { LINKS } from './Header'
+import { visibleLinks } from './Header'
 import logoMark from '../../../assets/logo-removebg.png'
 
 export default function Footer() {
@@ -41,7 +41,7 @@ export default function Footer() {
         <nav className="md:col-span-3 md:col-start-7" aria-label={t('footer.explore')}>
           <p className={heading}>{t('footer.explore')}</p>
           <ul className="space-y-3">
-            {LINKS.map((l) => (
+            {visibleLinks(profile).map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className={link}>{t(l.key)}</Link>
               </li>

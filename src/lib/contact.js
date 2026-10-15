@@ -1,5 +1,8 @@
 import { supabase } from './supabaseClient'
 
+/** Adresse e-mail de contact de THIGA (celle de la propriétaire de la plateforme). */
+export const CONTACT_EMAIL = 'fatouelbech38@gmail.com'
+
 /**
  * Numéros lisibles par le compte connecté, indexés par identifiant de profil.
  * La policy ne renvoie que ceux auxquels il a droit (lui-même, ou l'autre
