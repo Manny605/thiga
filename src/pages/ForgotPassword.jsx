@@ -9,17 +9,12 @@ import { Wordmark } from '../components/layout/Header'
 import { Input, PhoneInput } from '../components/ui/Field'
 import Button from '../components/ui/Button'
 
-/**
- * Mot de passe oublié, sans e-mail : l'utilisateur dépose une demande avec son
- * numéro. L'équipe le rappelle au numéro enregistré sur son compte et lui
- * transmet un mot de passe temporaire, qu'il remplace à la connexion suivante.
- */
 export default function ForgotPassword() {
   const { t } = useI18n()
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [phoneError, setPhoneError] = useState('')
-  const [state, setState] = useState('idle') // idle | sending | sent | error
+  const [state, setState] = useState('idle')
 
   useDocumentMeta(t('auth.forgotTitle'), t('auth.forgotLede'))
 
@@ -31,7 +26,6 @@ export default function ForgotPassword() {
       return
     }
     setState('sending')
-    // La réponse ne dit jamais si un compte existe : même message dans tous les cas.
     const { error } = await supabase.rpc('request_password_reset', { p_phone: phone, p_email: email.trim() || null })
     setState(error ? 'error' : 'sent')
   }

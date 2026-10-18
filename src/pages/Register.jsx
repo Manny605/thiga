@@ -19,12 +19,10 @@ const ROLES = [
   { id: 'worker', icon: HardHat, title: 'auth.roleWorker', desc: 'auth.roleWorkerD' },
 ]
 
-// `/inscription?role=employeur` présélectionne le rôle depuis un appel à l'action.
 const ROLE_PARAM = { employeur: 'employer', employer: 'employer', travailleur: 'worker', worker: 'worker' }
 
 const RESEND_COOLDOWN = 60
 
-/** Erreurs de saisie, par champ ; objet vide si tout est bon. */
 function validate({ role, fullName, email, phone, city, trade, password, confirm }) {
   const e = {}
   if (fullName.trim().length < 2) e.fullName = 'auth.errName'
@@ -38,7 +36,6 @@ function validate({ role, fullName, email, phone, city, trade, password, confirm
   return e
 }
 
-/** Choix du rôle : contrôle segmenté, la pastille blanche glisse sous le rôle actif. */
 function RoleSwitch({ role, onChange }) {
   const { t } = useI18n()
   const index = ROLES.findIndex((r) => r.id === role)
@@ -78,11 +75,10 @@ function RoleSwitch({ role, onChange }) {
   )
 }
 
-/** Écran affiché quand Supabase attend la confirmation de l'adresse e-mail. */
 function CheckEmail({ email, onEdit }) {
   const { t } = useI18n()
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN)
-  const [state, setState] = useState('idle') // idle | sending | sent | error
+  const [state, setState] = useState('idle')
 
   useEffect(() => {
     if (cooldown <= 0) return undefined
@@ -149,7 +145,6 @@ export default function Register() {
 
   useDocumentMeta(t('auth.registerTitle'), t('auth.registerLede'))
 
-  /** Met à jour un champ et efface son erreur dès que l'utilisateur la corrige. */
   const field = (name, setter, alsoClear) => (value) => {
     setter(value)
     if (errors[name] || errors[alsoClear]) {
@@ -179,8 +174,6 @@ export default function Register() {
     })
     setSubmitting(false)
 
-    // Adresse déjà inscrite : selon la configuration du projet, Supabase renvoie
-    // une erreur, ou (confirmation par e-mail active) un utilisateur sans identité.
     const taken = error?.code === 'user_already_exists' || error?.code === 'email_exists' ||
       (!error && data.user && data.user.identities?.length === 0)
     if (taken) return setErrors({ email: 'auth.errorEmailTaken' })
@@ -194,8 +187,6 @@ export default function Register() {
 
     if (!data.session) return setPendingEmail(cleanEmail)
 
-    // Le rôle du formulaire est celui que le trigger `handle_new_user` vient
-    // d'écrire (il n'accepte que 'worker' ou 'employer').
     navigate(dashPathFor(role) || '/', { replace: true })
   }
 
@@ -203,7 +194,6 @@ export default function Register() {
 
   return (
     <div className="relative isolate overflow-hidden px-4 py-12 sm:px-5 md:py-20">
-      {/* Fond : deux halos doux aux couleurs de la marque, motif à peine visible. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-40 start-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-vert-100/60 blur-3xl rtl:translate-x-1/2" />
         <div className="absolute -bottom-48 end-[-8rem] h-[26rem] w-[26rem] rounded-full bg-ocre-100/70 blur-3xl" />
@@ -272,8 +262,6 @@ export default function Register() {
                   ))}
                 </Select>
 
-                {/* Le métier prend toute la ligne : mot de passe et confirmation
-                    restent ainsi côte à côte, pour les deux rôles. */}
                 {role === 'worker' && (
                   <div className="sm:col-span-2">
                     <Select

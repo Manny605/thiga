@@ -32,7 +32,6 @@ const LANG_LABEL = {
 
 const DOT = { now: 'bg-vert-600', soon: 'bg-ocre-500', busy: 'bg-ink-400' }
 
-/** Une case de la grille de chiffres clés, sous l'en-tête. */
 function Fact({ icon: Icon, label, children }) {
   return (
     <div className="rounded-2xl border border-sand-200/80 bg-white p-4 shadow-sm sm:p-5">
@@ -45,7 +44,6 @@ function Fact({ icon: Icon, label, children }) {
   )
 }
 
-/** Partage du profil : feuille de partage du téléphone si elle existe, sinon copie du lien ; WhatsApp à part. */
 function ShareButtons({ name, trade }) {
   const { t } = useI18n()
   const [copied, setCopied] = useState(false)
@@ -64,14 +62,12 @@ function ShareButtons({ name, trade }) {
         await navigator.share({ title: text, url })
         return
       } catch {
-        // Partage annulé ou refusé : on retombe sur la copie du lien.
       }
     }
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
     } catch {
-      // Presse-papiers indisponible : rien de plus à faire sans boîte de dialogue.
     }
   }
 
@@ -129,8 +125,6 @@ export default function WorkerDetail() {
   const isEmployer = isAuthenticated && profile?.role === 'employer'
   const isOwn = !!user && user.id === id
 
-  // Cet employeur a-t-il reçu une candidature de ce travailleur ? Si oui, la
-  // fiche cesse d'être une vitrine et devient un dossier de candidature.
   useEffect(() => {
     let cancelled = false
     if (!isEmployer || !user?.id) {
@@ -161,7 +155,6 @@ export default function WorkerDetail() {
         setW(worker)
         setLoading(false)
         if (!worker) return
-        // Profils du même métier : une seule page de recherche, sans le profil affiché.
         const { rows } = await searchWorkers({ trade: worker.trade })
         if (!cancelled) setSimilar(rows.filter((x) => x.id !== worker.id).slice(0, 3))
       })
@@ -192,7 +185,6 @@ export default function WorkerDetail() {
 
   return (
     <>
-      {/* ── En-tête : retour, avatar, identité, partage ── */}
       <section className="border-b border-sand-200 bg-white">
         <div className="shell pb-8 pt-6">
           <Link
@@ -233,7 +225,6 @@ export default function WorkerDetail() {
             </div>
           </div>
 
-          {/* ── Chiffres clés en grille ── */}
           <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
             <Fact icon={Clock} label={t('common.experience')}>
               {n(w.years || 0)} {t('common.years')}
@@ -327,9 +318,6 @@ export default function WorkerDetail() {
                   </Button>
                 </>
               ) : applications.length > 0 ? (
-                /* Dossier de candidature : ce que ce travailleur a envoyé à cet
-                   employeur, CV compris. Lui proposer ici de « publier une
-                   annonce » n'aurait aucun sens, il a déjà postulé. */
                 <>
                   <h2 className="text-[19px] font-semibold leading-snug">{t('workers.appliedTitle')}</h2>
                   <ul className="mt-4 space-y-4">
@@ -375,8 +363,6 @@ export default function WorkerDetail() {
               ) : (
                 <>
                   <h2 className="text-[19px] font-semibold leading-snug">{t('workers.contactTitle')}</h2>
-                  {/* Pas de messagerie : la mise en relation passe par une
-                      annonce, puis par le téléphone une fois présélectionné. */}
                   <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{t('workers.contactLede')}</p>
 
                   {isEmployer ? (

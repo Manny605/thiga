@@ -9,18 +9,12 @@ import { Select, Textarea } from '../../../components/ui/Field'
 const REASONS = ['blurry', 'expired', 'mismatch', 'wrong_document', 'incomplete', 'other']
 import { useAdmin } from './AdminLayout'
 
-/**
- * File de validation de l'admin, en deux modules distincts du menu :
- * `kind="job"` pour les annonces à publier, `kind="profile"` pour les pièces
- * d'identité envoyées par les employeurs et les travailleurs.
- */
 export default function Moderation({ kind }) {
   const { t, d } = useI18n()
   const { queue, resolveQueue } = useAdmin()
   const [role, setRole] = useState('')
   const [error, setError] = useState('')
   const [busyId, setBusyId] = useState(null)
-  // Refus d'une vérification : demande ouverte, motif choisi, précision libre.
   const [rejecting, setRejecting] = useState(null)
   const [reason, setReason] = useState('')
   const [note, setNote] = useState('')
@@ -41,7 +35,6 @@ export default function Moderation({ kind }) {
     }
   }
 
-  /** Une vérification ne se refuse pas sans motif : le bouton ouvre d'abord le choix. */
   const askReject = (id) => {
     setRejecting(id)
     setReason('')

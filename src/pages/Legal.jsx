@@ -4,7 +4,6 @@ import PageHeader from '../components/layout/PageHeader'
 import NotFound from './NotFound'
 import { useDocumentMeta } from '../lib/useDocumentMeta'
 
-/** Les [[champs à compléter]] sont surlignés : impossible de les publier sans les voir. */
 function Paragraph({ text }) {
   const parts = text.split(/(\[\[[^\]]+\]\])/g)
   return (
@@ -22,7 +21,6 @@ function Paragraph({ text }) {
   )
 }
 
-/** Mentions légales, confidentialité, conditions : même gabarit, texte dans `content/legal.js`. */
 export default function Legal({ doc }) {
   const { t, d, lang } = useI18n()
   const page = (LEGAL[lang] || LEGAL.fr)[doc]

@@ -12,11 +12,6 @@ const SEVERITY_RANK = { high: 0, medium: 1, low: 2 }
 const STRIPE = { high: 'bg-red-500', medium: 'bg-ocre-500', low: 'bg-sand-300' }
 const RESOLUTION_TONE = { dismissed: 'closed', content_removed: 'pending', account_suspended: 'high' }
 
-/**
- * Regroupe les signalements ouverts par cible : trois personnes qui signalent
- * la même annonce, c'est un dossier, pas trois. Tri : gravité, puis volume,
- * puis le plus récent.
- */
 function groupByTarget(reports) {
   const groups = new Map()
   for (const r of reports) {
@@ -35,7 +30,6 @@ function groupByTarget(reports) {
   )
 }
 
-/** Décision sur un dossier : confirmation avec note interne facultative. */
 function DecisionForm({ label, confirmLabel, tone, busy, onConfirm, onCancel }) {
   const { t } = useI18n()
   const [note, setNote] = useState('')
@@ -80,7 +74,6 @@ function DecisionForm({ label, confirmLabel, tone, busy, onConfirm, onCancel }) 
   )
 }
 
-/** Lien vers la cible : l'annonce publique, ou la fiche admin du compte (avec ses actions). */
 function TargetLink({ r, children, className }) {
   const to = r.kind === 'job' ? `/offres/${r.jobId}` : `/admin/utilisateurs/${r.workerId}`
   return <Link to={to} className={className}>{children}</Link>
@@ -91,7 +84,7 @@ function OpenReports() {
   const { reports, resolveReports } = useAdmin()
   const [severity, setSeverity] = useState('')
   const [kind, setKind] = useState('')
-  const [deciding, setDeciding] = useState(null) // `${groupKey}:${action}`
+  const [deciding, setDeciding] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -147,7 +140,6 @@ function OpenReports() {
 
             return (
               <Panel key={g.key} className="relative">
-                {/* Liseré de gravité : le plus urgent se repère sans lire. */}
                 <span className={`absolute inset-y-0 start-0 w-1 ${STRIPE[g.severity]}`} aria-hidden="true" />
 
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -176,7 +168,6 @@ function OpenReports() {
                   </TargetLink>
                 </div>
 
-                {/* Chaque signalement du dossier : motif, auteur, précision. */}
                 <ul className="mt-4 space-y-2.5">
                   {g.items.map((r) => (
                     <li key={r.id} className="rounded-xl bg-sand-50 px-4 py-3">
@@ -238,7 +229,6 @@ function OpenReports() {
   )
 }
 
-/** Historique : chaque signalement traité, avec la décision et la note interne. */
 function ClosedReports() {
   const { t, d } = useI18n()
   const [list, setList] = useState(null)

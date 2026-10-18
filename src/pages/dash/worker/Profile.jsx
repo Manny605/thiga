@@ -10,7 +10,6 @@ import Button from '../../../components/ui/Button'
 import { Input, Select, Textarea } from '../../../components/ui/Field'
 import { useWorkerDash } from './WorkerLayout'
 
-/** Dépôt, consultation et retrait du CV rattaché au profil. */
 function CvPanel({ workerId, profile, onChanged }) {
   const { t, d } = useI18n()
   const [busy, setBusy] = useState(false)
@@ -19,7 +18,7 @@ function CvPanel({ workerId, profile, onChanged }) {
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0]
-    e.target.value = '' // permet de re-sélectionner le même fichier après une erreur
+    e.target.value = ''
     if (!file) return
 
     const problem = describeCvProblem(file, t)
@@ -173,8 +172,6 @@ export default function Profile() {
 
   return (
     <>
-      {/* Un profil non vérifié n'apparaît pas dans l'annuaire : la demande
-          se fait ici, comme pour les employeurs. */}
       {user && !workerProfile.verified && (
         <VerificationPanel profileId={user.id} ledeKey="verification.ledeWorker" />
       )}

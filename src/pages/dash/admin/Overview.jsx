@@ -24,8 +24,6 @@ export default function Overview() {
   const pendingUsers = users.filter((u) => u.status === 'pending')
   const latest = [...users].sort((a, b) => b.joined.localeCompare(a.joined)).slice(0, 5)
 
-  // La courbe affichait un jeu de données fictif (`TRAFFIC`) et un « +18 % »
-  // écrit en dur. Elle compte désormais les inscriptions réelles par jour.
   const signups = useMemo(() => {
     const days = []
     const today = new Date()
@@ -44,7 +42,6 @@ export default function Overview() {
     return {
       series,
       total: recent + previous,
-      // Pas de point de comparaison quand la période précédente est vide.
       trend: previous === 0 ? null : Math.round(((recent - previous) / previous) * 100),
     }
   }, [users])

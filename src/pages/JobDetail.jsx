@@ -32,10 +32,10 @@ export default function JobDetail() {
   const [loading, setLoading] = useState(true)
 
   const [message, setMessage] = useState('')
-  const [applyState, setApplyState] = useState('idle') // idle | sending | sent | error
+  const [applyState, setApplyState] = useState('idle')
   const [existingApp, setExistingApp] = useState(null)
-  const [profileCv, setProfileCv] = useState(null)   // CV de référence
-  const [cvFile, setCvFile] = useState(null)         // CV joint pour cette offre seulement
+  const [profileCv, setProfileCv] = useState(null)
+  const [cvFile, setCvFile] = useState(null)
 
   useDocumentMeta(job && `${job.title} · ${t(`cities.${job.city}`)}`, job?.desc)
   const [cvError, setCvError] = useState('')
@@ -57,8 +57,6 @@ export default function JobDetail() {
     return () => { cancelled = true }
   }, [id])
 
-  // Candidature déjà envoyée : au rechargement de la page, le formulaire
-  // réapparaissait comme si de rien n'était et l'envoi butait sur l'unicité.
   useEffect(() => {
     let cancelled = false
     if (!workerId) {
@@ -79,8 +77,6 @@ export default function JobDetail() {
     setApplyState('sending')
     setCvError('')
 
-    // Un fichier choisi ici ne remplace pas le CV du profil : il ne vaut que
-    // pour cette candidature. Sinon, c'est le CV de référence qui part.
     let cv = profileCv
     if (cvFile) {
       try {
@@ -109,7 +105,6 @@ export default function JobDetail() {
       setApplyState('sent')
       return
     }
-    // 23505 : contrainte (job_id, worker_id) — une candidature existe déjà.
     if (error.code === '23505') {
       const app = await fetchMyApplication(id, user.id).catch(() => null)
       setExistingApp(app || { id: null, status: 'new' })
@@ -150,7 +145,6 @@ export default function JobDetail() {
       </div>
 
       <div className="shell grid gap-10 py-12 lg:grid-cols-12 lg:gap-12 lg:py-16">
-        {/* Contenu principal */}
         <article className="lg:col-span-7 xl:col-span-8">
           <div className="flex flex-wrap items-center gap-2 animate-fade">
             <Badge tone="vert">{tradeLabel(job.trade)}</Badge>
@@ -235,7 +229,6 @@ export default function JobDetail() {
           {job.employerId && <ReviewList profileId={job.employerId} className="mt-10" />}
         </article>
 
-        {/* Colonne de candidature */}
         <aside className="lg:col-span-5 xl:col-span-4">
           <div className="sticky top-28 rounded-2xl border border-sand-200/70 bg-white p-6 shadow-card">
             <h2 className="text-[21px] leading-snug">{t('jobs.applyTitle')}</h2>
@@ -271,8 +264,6 @@ export default function JobDetail() {
               </div>
             ) : (
               <form className="mt-6 space-y-4" onSubmit={handleApply}>
-                {/* Le CV porte l'essentiel de la candidature ; le message ne
-                    fait plus que l'accompagner. */}
                 <div className="rounded-xl border border-sand-200 bg-sand-50/60 p-4">
                   <p className="flex items-center gap-2 text-[14px] font-medium text-ink-800">
                     <Paperclip className="h-3.5 w-3.5" />

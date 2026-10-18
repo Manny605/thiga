@@ -39,7 +39,6 @@ export default function Overview() {
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-12">
-        {/* Annonces */}
         <Panel
           title={t('dash.myJobs')}
           bodyClass=""
@@ -74,7 +73,6 @@ export default function Overview() {
           )}
         </Panel>
 
-        {/* Candidatures reçues */}
         <Panel
           title={t('dash.applicants')}
           bodyClass=""

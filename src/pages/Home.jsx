@@ -15,10 +15,6 @@ import bannerLg from '../../assets/hero-banner-1400.webp'
 
 const TRUST_ICONS = [BadgeCheck, FileCheck2, Flag]
 
-/**
- * Colonne visuelle du héros : l'illustration (bords déjà fondus dans l'image),
- * et par-dessus les vrais compteurs de la plateforme, jamais des valeurs inventées.
- */
 function HeroBanner({ stats }) {
   const { t, n } = useI18n()
 
@@ -71,7 +67,6 @@ export default function Home() {
 
   return (
     <>
-      {/* ── Héros : recherche immédiate + illustration ────────── */}
       <section className="relative overflow-hidden border-b border-sand-200 bg-white">
         <div
           className="motif pointer-events-none absolute inset-0 opacity-[0.05] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_65%)]"
@@ -100,10 +95,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 01 · Offres filtrables ───────────────────────────── */}
       <HomeOffers />
 
-      {/* ── 02 · Métiers ─────────────────────────────────────── */}
       {visibleTrades.length > 0 && (
         <section className="bg-white">
           <div className="shell py-20 md:py-24">
@@ -130,7 +123,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── 03 · Recruter : les profils sont réservés aux employeurs ─ */}
       <section className="border-t border-sand-200 bg-sand-50">
         <div className="shell py-20 md:py-24">
           <Reveal className="grid items-center gap-8 rounded-3xl border border-sand-200 bg-white p-8 shadow-card md:grid-cols-12 md:p-12">
@@ -152,7 +144,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 04 · Comment ça marche ───────────────────────────── */}
       <section className="border-t border-sand-200 bg-white">
         <div className="shell py-20 md:py-24">
           <SectionHeading num="04" kicker={t('home.kPath')} title={t('home.howTitle')} lede={t('home.howLede')} />
@@ -170,7 +161,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 05 · Confiance ───────────────────────────────────── */}
       <section className="border-t border-sand-200 bg-sand-50">
         <div className="shell py-20 md:py-24">
           <SectionHeading num="05" kicker={t('home.kSafety')} title={t('home.trustTitle')} lede={t('home.trustLede')} />
@@ -191,7 +181,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Appel final ──────────────────────────────────────── */}
       <section className="bg-sand-50 pb-20 md:pb-24">
         <div className="shell">
           <Reveal className="relative overflow-hidden rounded-3xl bg-vert-800 px-6 py-12 text-center shadow-lift sm:px-12 md:py-16">

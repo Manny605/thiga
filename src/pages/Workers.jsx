@@ -76,7 +76,6 @@ export default function Workers() {
     <>
       <PageHeader kicker={t('nav.workers')} title={t('workers.title')} lede={t('workers.lede')} />
 
-      {/* Barre de filtres */}
       <section className="sticky top-20 z-30 border-b border-sand-200/70 bg-sand-50/80 backdrop-blur-xl">
         <div className="shell py-4">
           <div className="mb-4">
@@ -127,7 +126,6 @@ export default function Workers() {
         </div>
       </section>
 
-      {/* Résultats */}
       <section className="shell py-12 md:py-16">
         <div className="grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {loading ? (

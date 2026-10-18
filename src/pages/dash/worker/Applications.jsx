@@ -22,8 +22,6 @@ export default function Applications() {
 
   const list = status ? applications.filter((a) => a.status === status) : applications
 
-  // Numéros de l'autre partie, pour les seules candidatures présélectionnées :
-  // la base n'en livre pas d'autres. `null` tant que la lecture n'a pas abouti.
   const [contacts, setContacts] = useState(null)
   const shortlistedIds = applications
     .filter((a) => a.status === 'shortlisted' || a.status === 'hired')
@@ -40,7 +38,6 @@ export default function Applications() {
     return () => { active = false }
   }, [shortlistedIds])
 
-  // Avis déjà laissés, pour afficher le rappel plutôt que le formulaire.
   const [myReviews, setMyReviews] = useState({})
   useEffect(() => {
     if (!user) return undefined
