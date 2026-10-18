@@ -28,8 +28,6 @@ export default function Overview() {
       .catch(() => setSuggested([]))
   }, [workerProfile?.trade, workerProfile?.city])
 
-  // Chaque élément : libellé, fait ou non, page où le compléter. La photo et
-  // la vérification comptent : sans vérification, le profil reste hors annuaire.
   const checklist = workerProfile
     ? [
         [t('avatar.title'), !!profile?.avatar_path, '/tableau-de-bord/travailleur/parametres'],
@@ -61,7 +59,6 @@ export default function Overview() {
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-12">
-        {/* Complétion du profil */}
         <Panel title={t('dash.completion')} className="xl:col-span-5">
           <div className="flex items-end justify-between">
             <p className="font-display text-[38px] leading-none text-vert-700 tabular-nums">
@@ -107,7 +104,6 @@ export default function Overview() {
           </Button>
         </Panel>
 
-        {/* Mes candidatures */}
         <Panel
           title={t('dash.myApps')}
           bodyClass=""
@@ -143,7 +139,6 @@ export default function Overview() {
         </Panel>
       </div>
 
-      {/* Offres recommandées */}
       <Panel
         title={t('dash.recommended')}
         bodyClass=""

@@ -9,7 +9,6 @@ import ContactLine from '../../../components/dashboard/ContactLine'
 import { Textarea } from '../../../components/ui/Field'
 import { useAdmin } from './AdminLayout'
 
-/** Résultat de la vérification faite par la base au dépôt de la demande. */
 function MatchBadge({ r }) {
   const { t } = useI18n()
   if (!r.profileId) {
@@ -33,10 +32,9 @@ function MatchBadge({ r }) {
   )
 }
 
-/** Une demande en attente : compte retrouvé, numéro enregistré, actions. */
 function RequestCard({ r, onDone }) {
   const { t, d } = useI18n()
-  const [mode, setMode] = useState(null) // null | generate | reject
+  const [mode, setMode] = useState(null)
   const [note, setNote] = useState('')
   const [temp, setTemp] = useState('')
   const [busy, setBusy] = useState(false)
@@ -75,7 +73,6 @@ function RequestCard({ r, onDone }) {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Presse-papiers indisponible : le mot de passe reste sélectionnable.
     }
   }
 
@@ -112,7 +109,6 @@ function RequestCard({ r, onDone }) {
             {r.role && <> · {t(`admin.${r.role}`)}</>}
             {r.suspended && <> · <span className="text-red-600">{t('admin.suspended')}</span></>}
           </p>
-          {/* Le seul numéro auquel transmettre le mot de passe : celui du compte. */}
           <ContactLine label={t('admin.resetRegisteredPhone')} phone={r.registeredPhone} />
         </div>
       )}
@@ -228,7 +224,6 @@ function History() {
   )
 }
 
-/** Module Accès : demandes de réinitialisation déposées sans e-mail. */
 export default function Access() {
   const { t, n } = useI18n()
   const { resetRequests, dropResetRequest } = useAdmin()

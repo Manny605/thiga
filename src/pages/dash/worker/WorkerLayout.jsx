@@ -14,7 +14,6 @@ export const WORKER_NAV = [
   { to: '/tableau-de-bord/travailleur/parametres', icon: Settings, label: 'dash.settings', lede: 'dash.settingsLede' },
 ]
 
-/** Accès à l'état partagé de l'espace travailleur depuis n'importe quelle sous-page. */
 export function useWorkerDash() {
   return useOutletContext()
 }
@@ -63,8 +62,6 @@ export default function WorkerLayout() {
 
   const current = [...WORKER_NAV].reverse().find((i) => (i.end ? pathname === i.to : pathname.startsWith(i.to))) || WORKER_NAV[0]
 
-  // L'identifiant porte le statut : une décision de l'employeur produit donc
-  // une notification neuve, même si la candidature, elle, est ancienne.
   const notifications = applications
     .filter((a) => a.status === 'shortlisted' || a.status === 'hired' || a.status === 'rejected')
     .map((a) => ({

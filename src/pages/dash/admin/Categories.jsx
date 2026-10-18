@@ -10,7 +10,6 @@ import TradeIcon, { ICON_NAMES } from '../../../components/TradeIcon'
 import Button from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Field'
 
-/** Catégorie de repli du trigger d'inscription : ni supprimable, ni masquable. */
 const CORE_TRADE = 'autre'
 
 function TradeForm({ trade, existingIds, onSaved, onCancel }) {
@@ -115,7 +114,7 @@ export default function Categories() {
   const { trades, tradeLabel, reload } = useTrades()
 
   const [usage, setUsage] = useState({})
-  const [form, setForm] = useState(null) // null | {} (création) | { trade } (édition)
+  const [form, setForm] = useState(null)
   const [confirmingId, setConfirmingId] = useState(null)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -135,7 +134,6 @@ export default function Categories() {
       await loadUsage()
       if (successMessage) setMessage(successMessage)
     } catch (err) {
-      // 23503 : clé étrangère — la catégorie est encore portée par une ligne.
       setError(err?.code === '23503' ? t('admin.tradeInUse') : t('dash.actionError'))
     }
   }
@@ -153,7 +151,6 @@ export default function Categories() {
       </div>
 
       {form && (
-        // `key` : repartir d'un formulaire vierge en passant d'une catégorie à l'autre.
         <TradeForm
           key={form.trade?.id || 'new'}
           trade={form.trade}

@@ -19,8 +19,6 @@ export default function Users() {
   const { t, n, d } = useI18n()
   const { tradeLabel } = useTrades()
   const { users, queue, patchUser, removeUser } = useAdmin()
-  // Statut du compte et vérification d'identité sont indépendants : un compte
-  // actif peut avoir une pièce d'identité en attente, on le signale à côté.
   const identityPending = new Set(queue.filter((x) => x.kind === 'profile').map((x) => x.profileId))
 
   const [q, setQ] = useState('')
@@ -33,8 +31,6 @@ export default function Users() {
   const [deletingId, setDeletingId] = useState(null)
   const [resettingId, setResettingId] = useState(null)
 
-  // `patchUser` remonte l'erreur : sans ce relais, un refus de droits côté
-  // base ne laissait aucune trace à l'écran.
   const apply = async (id, patch) => {
     setError('')
     try {
@@ -80,7 +76,6 @@ export default function Users() {
       {error && <p className="mb-6 text-[14px] text-red-600">{error}</p>}
       {message && <p className="mb-6 text-[14px] text-vert-700">{message}</p>}
 
-      {/* Filtres */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <label className="relative block">
           <span className="mb-1.5 block text-[14px] font-medium text-ink-800">{t('common.search')}</span>
@@ -124,7 +119,6 @@ export default function Users() {
           </span>
         }
       >
-        {/* Tableau (desktop) */}
         <div className="hidden overflow-x-auto lg:block">
           <table className="w-full text-start text-[14px]">
             <thead>
@@ -208,7 +202,6 @@ export default function Users() {
           </table>
         </div>
 
-        {/* Cartes (mobile) */}
         <ul className="divide-y divide-sand-200 lg:hidden">
           {list.map((u) => (
             <li key={u.id} className="px-6 py-4">
@@ -272,7 +265,6 @@ export default function Users() {
   )
 }
 
-/** E-mail et téléphone d'un compte, sélectionnables pour être copiés. */
 function ContactCell({ u }) {
   if (!u.email && !u.phone) return null
   return (
@@ -293,7 +285,6 @@ function ContactCell({ u }) {
   )
 }
 
-/** Boutons d'action d'un compte : partagés par le tableau, les cartes et la fiche. */
 export function RowActions({ u, patchUser, onDelete, onResetPassword, t }) {
   const btn =
     'grid h-9 w-9 place-items-center rounded-lg border transition-colors disabled:opacity-30'
@@ -361,10 +352,6 @@ export function RowActions({ u, patchUser, onDelete, onResetPassword, t }) {
   )
 }
 
-/**
- * Confirmation de suppression : irréversible, elle dit ce qui part avec le
- * compte et ne tient pas en un clic.
- */
 export function ConfirmDelete({ u, busy, onConfirm, onCancel }) {
   const { t } = useI18n()
   return (
@@ -396,14 +383,9 @@ export function ConfirmDelete({ u, busy, onConfirm, onCancel }) {
   )
 }
 
-/**
- * Réinitialisation depuis la liste : confirmation, puis mot de passe temporaire
- * affiché une seule fois, à transmettre au numéro enregistré (rappelé ici).
- * Le compte devra choisir le sien à sa prochaine connexion.
- */
 function ResetPasswordBox({ u, onClose }) {
   const { t } = useI18n()
-  const [phone, setPhone] = useState(undefined) // undefined = chargement
+  const [phone, setPhone] = useState(undefined)
   const [temp, setTemp] = useState('')
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -435,7 +417,6 @@ function ResetPasswordBox({ u, onClose }) {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Presse-papiers indisponible : le mot de passe reste sélectionnable.
     }
   }
 

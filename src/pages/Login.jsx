@@ -32,9 +32,6 @@ export default function Login() {
       return
     }
 
-    // Le contexte d'auth charge le profil de son côté, mais de façon
-    // asynchrone : on relit le rôle ici pour rediriger sans attendre — et
-    // sans passer par un écran intermédiaire.
     let profile = null
     try {
       profile = await fetchProfile(data.user.id)

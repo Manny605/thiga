@@ -25,8 +25,6 @@ export default function Applicants() {
 
   const list = status ? applicants.filter((a) => a.status === status) : applicants
 
-  // Numéros de l'autre partie, pour les seules candidatures présélectionnées :
-  // la base n'en livre pas d'autres. `null` tant que la lecture n'a pas abouti.
   const [contacts, setContacts] = useState(null)
   const shortlistedIds = applicants
     .filter((a) => a.status === 'shortlisted' || a.status === 'hired')
@@ -42,7 +40,6 @@ export default function Applicants() {
     return () => { active = false }
   }, [shortlistedIds])
 
-  // Avis déjà laissés, pour afficher le rappel plutôt que le formulaire.
   const [myReviews, setMyReviews] = useState({})
   useEffect(() => {
     if (!user) return undefined
@@ -63,7 +60,6 @@ export default function Applicants() {
     }
   }
 
-  /** Lien signé valable 5 minutes : le CV n'est jamais exposé publiquement. */
   const openCv = async (path) => {
     setError('')
     try {
@@ -180,8 +176,6 @@ export default function Applicants() {
                   />
                 )}
 
-                {/* Le mot du candidat : saisi à la candidature, il n'était
-                    affiché nulle part côté employeur. */}
                 {a.message && (
                   <p className="mt-3 flex gap-2.5 border-s-2 border-sand-300 ps-3.5 text-[13.5px] leading-relaxed text-ink-600">
                     <Quote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sand-400" />

@@ -9,10 +9,9 @@ import ContactLine from '../../../components/dashboard/ContactLine'
 import { Textarea } from '../../../components/ui/Field'
 import { useAdmin } from './AdminLayout'
 
-/** Un message à traiter : coordonnées pour répondre, texte, actions. */
 function MessageCard({ m, onDone }) {
   const { t, d } = useI18n()
-  const [mode, setMode] = useState(null) // null | handle | delete
+  const [mode, setMode] = useState(null)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -23,7 +22,6 @@ function MessageCard({ m, onDone }) {
     setError('')
     setSending(true)
     try {
-      // `sent: false` : déjà parti entre-temps ; dans les deux cas, il est reçu.
       await emailContactMessage(m.id)
       setEmailed(true)
     } catch {
@@ -199,7 +197,6 @@ function History() {
   )
 }
 
-/** Module Messages : ce que les visiteurs écrivent depuis la page Contact. */
 export default function Messages() {
   const { t, n } = useI18n()
   const { contactMessages, dropContactMessage } = useAdmin()

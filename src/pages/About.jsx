@@ -10,7 +10,6 @@ import Button from '../components/ui/Button'
 
 export default function About() {
   const { t, n } = useI18n()
-  // Chiffres réels : ils venaient d'un objet fictif de `data/mock.js`.
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export default function About() {
     <>
       <PageHeader kicker={t('nav.about')} title={t('about.title')} lede={t('about.lede')} />
 
-      {/* Mission — mise en page éditoriale */}
       <section className="shell py-20 md:py-28">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
           <Reveal className="lg:col-span-4">
@@ -40,7 +38,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Principes */}
       <section className="border-y border-sand-200/70 bg-white">
         <div className="shell py-20 md:py-28">
           <SectionHeading num="01" kicker={t('about.valuesK')} title={t('about.valuesK')} className="border-t-ink/15" />
@@ -58,7 +55,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Couverture */}
       <section className="shell py-20 md:py-28">
         <SectionHeading num="02" kicker={t('about.reachK')} title={t('about.reachK')} lede={t('about.reachD')} />
         <div className="mt-12 flex flex-wrap gap-2.5">

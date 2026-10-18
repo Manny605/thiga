@@ -17,7 +17,6 @@ import { ConfirmDelete, RowActions } from './Users'
 const STATUS_TONE = { active: 'online', pending: 'pending', suspended: 'closed' }
 const VERIF_TONE = { pending: 'pending', approved: 'online', rejected: 'closed' }
 
-/** Ligne « libellé : valeur » des cartes d'information. */
 function Row({ label, children }) {
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-sand-200/70 py-2.5 last:border-0">
@@ -27,14 +26,9 @@ function Row({ label, children }) {
   )
 }
 
-/**
- * Dépannage de l'accès, sans e-mail : un mot de passe temporaire à transmettre
- * au numéro enregistré du compte. Il n'est montré qu'une fois ; le compte devra
- * le remplacer à sa prochaine connexion.
- */
 function AccessPanel({ u }) {
   const { t } = useI18n()
-  const [state, setState] = useState('idle') // idle | confirming | generating
+  const [state, setState] = useState('idle')
   const [temp, setTemp] = useState('')
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
@@ -57,7 +51,6 @@ function AccessPanel({ u }) {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Presse-papiers indisponible : le mot de passe reste sélectionnable à l'écran.
     }
   }
 
@@ -110,7 +103,6 @@ function AccessPanel({ u }) {
   )
 }
 
-/** Fiche complète d'un compte, côté admin : visible quel que soit son statut ou sa vérification. */
 export default function UserDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -118,7 +110,7 @@ export default function UserDetail() {
   const { tradeLabel } = useTrades()
   const { patchUser, removeUser } = useAdmin()
 
-  const [u, setU] = useState(undefined) // undefined = chargement, null = introuvable
+  const [u, setU] = useState(undefined)
   const [error, setError] = useState('')
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -135,7 +127,6 @@ export default function UserDetail() {
     load()
   }, [load])
 
-  /** Les actions de la liste, puis relecture : la fiche reflète l'état réel en base. */
   const apply = async (userId, patch) => {
     setError('')
     try {
@@ -194,7 +185,6 @@ export default function UserDetail() {
     <>
       {back}
 
-      {/* ── En-tête : identité, statut, actions ── */}
       <Panel className="mt-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-4">
@@ -242,7 +232,6 @@ export default function UserDetail() {
       </Panel>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
-        {/* ── Colonne principale ── */}
         <div className="space-y-6 xl:col-span-2">
           {w && (
             <Panel title={t('admin.workProfile')}>
@@ -284,7 +273,6 @@ export default function UserDetail() {
             </Panel>
           )}
 
-          {/* Activité : annonces d'un employeur, candidatures d'un travailleur. */}
           <Panel title={t(u.role === 'employer' ? 'admin.jobsList' : 'admin.applicationsList')} bodyClass="">
             {(u.role === 'employer' ? u.jobs : u.applications).length === 0 ? (
               <p className="px-6 py-10 text-center text-[14.5px] text-ink-400">{t('admin.noActivity')}</p>
@@ -324,7 +312,6 @@ export default function UserDetail() {
           <ReviewList profileId={u.id} />
         </div>
 
-        {/* ── Colonne latérale : contact et vérification ── */}
         <div className="space-y-6">
           <Panel title={t('admin.contact')}>
             <dl>

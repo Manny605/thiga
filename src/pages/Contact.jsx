@@ -15,21 +15,15 @@ const SUBJECTS = ['general', 'account', 'job', 'partnership', 'other']
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 const EMPTY = { name: '', phone: '', email: '', subject: 'general', message: '', website: '' }
 
-/**
- * Contactez-nous : ouvert à tous. Le message arrive dans l'espace admin
- * (module Messages) ; l'équipe répond au numéro ou à l'e-mail laissé.
- * Un compte connecté voit ses coordonnées déjà remplies.
- */
 export default function Contact() {
   const { t } = useI18n()
   const { user, profile } = useAuth()
   const [form, setForm] = useState(EMPTY)
   const [errors, setErrors] = useState({})
-  const [state, setState] = useState('idle') // idle | sending | sent | error | rate
+  const [state, setState] = useState('idle')
 
   useDocumentMeta(t('contact.title'), t('contact.lede'))
 
-  // Préremplissage pour un compte connecté : nom, e-mail et numéro enregistrés.
   useEffect(() => {
     if (!user) return
     let active = true
@@ -67,7 +61,6 @@ export default function Contact() {
       document.getElementById(`contact-${first === 'reach' ? 'phone' : first}`)?.focus()
       return
     }
-    // Champ piège invisible : rempli, c'est un robot. On fait comme si de rien n'était.
     if (form.website) {
       setState('sent')
       return
@@ -84,8 +77,6 @@ export default function Contact() {
       setState(/rate_limited/.test(error.message || '') ? 'rate' : 'error')
       return
     }
-    // Copie par e-mail à la propriétaire. Le message est déjà enregistré :
-    // un échec d'envoi ne concerne pas le visiteur (l'admin peut renvoyer).
     supabase.functions.invoke('contact-email', { body: { id } }).catch(() => {})
     setState('sent')
   }
@@ -189,7 +180,6 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  {/* Piège à robots : invisible et hors du parcours clavier. */}
                   <input
                     type="text"
                     name="website"

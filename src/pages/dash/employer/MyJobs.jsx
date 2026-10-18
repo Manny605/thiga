@@ -13,7 +13,6 @@ import Button from '../../../components/ui/Button'
 import { Input, Select, Textarea } from '../../../components/ui/Field'
 import { useEmployerDash } from './EmployerLayout'
 
-/** Publication et modification d'une offre — même formulaire, `job` décide. */
 function JobForm({ employerId, job, onDone, onCancel }) {
   const { t } = useI18n()
   const { visibleTrades, tradeLabel } = useTrades()
@@ -53,7 +52,6 @@ function JobForm({ employerId, job, onDone, onCancel }) {
     try {
       if (editing) {
         const saved = await updateJob(job.id, payload)
-        // Le trigger renvoie en modération une annonce en ligne modifiée.
         onDone(saved.status === 'pending' && job.status === 'online' ? t('dash.jobBackToReview') : t('dash.jobSaved'))
       } else {
         await createJob(employerId, payload)
@@ -116,8 +114,6 @@ function JobForm({ employerId, job, onDone, onCancel }) {
         <Textarea label={t('dash.reqsLabel')} rows={3} value={reqs} onChange={(e) => setReqs(e.target.value)} />
 
         <div className="max-w-xs">
-          {/* Vide = pas de limite. Une date déjà passée reste acceptée à
-              l'enregistrement : l'annonce demeure simplement expirée. */}
           <Input
             label={t('dash.deadlineLabel')}
             type="date"
@@ -151,7 +147,7 @@ export default function MyJobs() {
   const { user } = useAuth()
   const { jobs, reload, closeJob, republishJob, removeJob } = useEmployerDash()
 
-  const [form, setForm] = useState(null) // null | { job } — { job: undefined } = création
+  const [form, setForm] = useState(null)
   const [confirmingId, setConfirmingId] = useState(null)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -179,8 +175,6 @@ export default function MyJobs() {
       </div>
 
       {form && user && (
-        // `key` remonte le formulaire quand on passe d'une annonce à l'autre :
-        // sans lui, les champs garderaient les valeurs de la précédente.
         <JobForm
           key={form.job?.id || 'new'}
           employerId={user.id}
@@ -214,7 +208,6 @@ export default function MyJobs() {
                     </p>
                   </div>
 
-                  {/* En ligne mais expirée : l'annonce n'est plus visible, on le dit. */}
                   {j.status === 'online' && isExpired(j.deadline) ? (
                     <StatusPill status="closed">{t('jobStatus.expired')}</StatusPill>
                   ) : (
@@ -258,8 +251,6 @@ export default function MyJobs() {
                   </div>
                 </div>
 
-                {/* Confirmation en ligne : une suppression emporte les
-                    candidatures reçues, elle ne doit pas tenir en un clic. */}
                 {confirmingId === j.id && (
                   <div className="mt-3 flex flex-wrap items-center gap-3 border-s-2 border-ocre-500 bg-ocre-100/50 px-4 py-3">
                     <p className="flex-1 text-[13.5px] text-ocre-700">

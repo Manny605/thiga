@@ -17,7 +17,6 @@ export const EMPLOYER_NAV = [
   { to: '/tableau-de-bord/employeur/parametres', icon: Settings, label: 'dash.settings', lede: 'dash.settingsLede' },
 ]
 
-/** Accès à l'état partagé de l'espace employeur depuis n'importe quelle sous-page. */
 export function useEmployerDash() {
   return useOutletContext()
 }
@@ -33,8 +32,6 @@ export default function EmployerLayout() {
 
   const userId = user?.id
 
-  // Les deux requêtes étaient lancées sans `.catch` : une erreur réseau ou de
-  // droits laissait les listes vides, sans rien signaler.
   const load = useCallback(async () => {
     if (!userId) return
     try {
@@ -59,7 +56,6 @@ export default function EmployerLayout() {
       jobs,
       applicants,
       reload: load,
-      // Les actions relaient l'erreur : c'est la page qui décide de l'afficher.
       closeJob: async (jobId) => {
         await setJobStatus(jobId, 'closed')
         await load()
@@ -101,7 +97,6 @@ export default function EmployerLayout() {
         date: a.date,
         to: '/tableau-de-bord/employeur/candidatures',
       })),
-    // L'identifiant porte la date limite : la repousser fait renaître l'alerte.
     ...jobs
       .filter((j) => j.status === 'online' && j.deadline && daysUntil(j.deadline) >= 0 && daysUntil(j.deadline) <= 3)
       .map((j) => ({

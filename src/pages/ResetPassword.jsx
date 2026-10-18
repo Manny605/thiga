@@ -10,17 +10,12 @@ import Button from '../components/ui/Button'
 
 const MIN_LENGTH = 8
 
-/**
- * Arrivée depuis le lien de réinitialisation : Supabase a déjà ouvert une
- * session de récupération à partir du jeton de l'URL. Sans session, le lien
- * est expiré, déjà utilisé, ou la page a été ouverte directement.
- */
 export default function ResetPassword() {
   const { t } = useI18n()
   const { ready, session, profile, mustChangePassword } = useAuth()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [state, setState] = useState('idle') // idle | saving | done
+  const [state, setState] = useState('idle')
   const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {

@@ -42,8 +42,6 @@ export default function Settings() {
     setMessage('')
     try {
       await updateMySettings(user.id, { fullName, phone, city, employerType })
-      // Le nom est affiché par la coquille du tableau de bord : sans ce
-      // rafraîchissement, l'en-tête garde l'ancien jusqu'au rechargement.
       refreshProfile()
       setMessage(t('dash.profileSaved'))
     } catch {
